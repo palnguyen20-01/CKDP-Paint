@@ -13,6 +13,9 @@ namespace MyEllipse
         public Point End { get; set; }
 
         public string Name => "Ellipse";
+        public string Icon => "Images/ellipse.png";
+        public Color? color { get; set; } = null;
+        public int? thickness { get; set; } = null;
 
         public void UpdateStart(Point p)
         {
@@ -25,6 +28,11 @@ namespace MyEllipse
 
         public UIElement Draw(Color color, int thickness)
         {
+            if (this.color == null)
+            {
+                this.color = color;
+            }
+
             double width = Math.Abs(End.X - Start.X);
             double height = Math.Abs(End.Y - Start.Y);
 
@@ -32,7 +40,7 @@ namespace MyEllipse
             {
                 Width = width,
                 Height = height,
-                Stroke = new SolidColorBrush(color),
+                Stroke = new SolidColorBrush((Color)this.color),
                 StrokeThickness = thickness
             };
 

@@ -12,7 +12,10 @@ namespace LineAbility
         public Point End { get; set; }
 
         public string Name => "Line";
-
+        public string Icon => "Images/line.png";
+        public Color? color { get; set; } = null;
+        public int? thickness { get; set; } =null;
+       
         public void UpdateStart(Point p)
         {
             Start = p;
@@ -24,14 +27,19 @@ namespace LineAbility
 
         public UIElement Draw(Color color, int thickness)
         {
+          if(this.color == null)
+            {
+                this.color = color;
+            }
+
             return new Line()
             {
                 X1 = Start.X,
                 Y1 = Start.Y,
                 X2 = End.X,
                 Y2 = End.Y,
-                Stroke = new SolidColorBrush(color),
-                StrokeThickness = thickness
+                Stroke = new SolidColorBrush((Color)this.color),
+                StrokeThickness = (int)thickness
             };
         }
 

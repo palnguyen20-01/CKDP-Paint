@@ -8,7 +8,27 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\circle.png" />
+    <None Remove="Images\ellipse.png" />
+    <None Remove="Images\line.png" />
+    <None Remove="Images\rectangle.png" />
+    <None Remove="Images\square.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MyContract\MyContract.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\circle.png" />
+    <Resource Include="Images\ellipse.png" />
+    <Resource Include="Images\line.png" />
+    <Resource Include="Images\rectangle.png" />
+    <Resource Include="Images\square.png" />
   </ItemGroup>
 
 </Project>

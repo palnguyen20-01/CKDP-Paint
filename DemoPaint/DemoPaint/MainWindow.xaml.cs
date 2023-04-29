@@ -67,21 +67,32 @@ namespace DemoPaint
             {
                 var button = new Button()
                 {
-                    Width = 80,
-                    Height = 35,
+                    Width = 50,
+                    Height = 50,
                     Content = ability.Value.Name,
-                    Tag = ability.Value.Name
+                    Tag = ability.Value.Name,
+                };
+                button.Content = new Image
+                {
+                    Source = new BitmapImage(new Uri(ability.Value.Icon, UriKind.Relative)),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Stretch = Stretch.UniformToFill,
                 };
                 button.Click += ability_Click;
                 abilitiesStackPanel.Children.Add(button);
             }
         }
-
         private void ability_Click(object sender, RoutedEventArgs e)
         {
+            
             var button = (Button)sender;
             string name = (string)button.Tag;
             _selectedType = name;
+            button.Effect = new System.Windows.Media.Effects.DropShadowEffect()
+            {
+                BlurRadius = 10,
+                ShadowDepth = 5
+            };
         }
 
         bool _isDrawing = false;
@@ -132,6 +143,10 @@ namespace DemoPaint
 
             Title = "Up";
         }
-       
-     }
+
+        private void ClrPcker_Background_SelectedColorChanged_1(object sender, RoutedPropertyChangedEventArgs<Color?> e)
+        {
+            _selectedColor = (Color)e.NewValue;
+        }
+    }
 }
