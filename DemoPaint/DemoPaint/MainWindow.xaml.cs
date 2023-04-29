@@ -33,8 +33,9 @@ namespace DemoPaint
             InitializeComponent();
         }
 
-        Dictionary<string, IShape> _abilities = 
-            new Dictionary<string, IShape>();
+        Dictionary<string, IShape> _abilities = new Dictionary<string, IShape>();
+        bool _isDrawing = false;
+        Prototype _prototype = new Prototype();
 
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -84,10 +85,10 @@ namespace DemoPaint
         }
         private void ability_Click(object sender, RoutedEventArgs e)
         {
-            
+
             var button = (Button)sender;
             string name = (string)button.Tag;
-            _selectedType = name;
+            _prototype.type = name;
             button.Effect = new System.Windows.Media.Effects.DropShadowEffect()
             {
                 BlurRadius = 10,
@@ -95,58 +96,43 @@ namespace DemoPaint
             };
         }
 
-        bool _isDrawing = false;
-        IShape? _prototype = null;
-        string _selectedType = "";
-        Color _selectedColor = Colors.Black;
-        int _selectedThickness = 2;
-
         private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             _isDrawing = true;
-            _start = e.GetPosition(actualCanvas);
+            Point _start = e.GetPosition(actualCanvas);
 
-            _prototype = (IShape)
-                _abilities[_selectedType].Clone();
-            _prototype.UpdateStart(_start);
+            _prototype.shape = (IShape)_abilities[_prototype.type].Clone();
+            _prototype.shape.UpdateStart(_start);
+            actualCanvas.Children.Add(new UIElement());
         }
 
-        Point _start;
-        Point _end;
-
-        List<IShape> _shapes = new List<IShape>();
         private void canvas_MouseMove(object sender, MouseEventArgs e)
         {
             if (_isDrawing)
             {
-                actualCanvas.Children.Clear();
+                actualCanvas.Children.RemoveAt(actualCanvas.Children.Count - 1);
 
-                foreach(var shape in _shapes)
-                {
-                    UIElement oldShape = shape.Draw(_selectedColor, _selectedThickness);
-                    actualCanvas.Children.Add(oldShape);
-                }
+                Point _end = e.GetPosition(actualCanvas);
+                _prototype.shape.UpdateEnd(_end);
 
-                _end = e.GetPosition(actualCanvas);
-                _prototype.UpdateEnd(_end);
-
-                UIElement newShape = _prototype.Draw(_selectedColor, _selectedThickness);
+                UIElement newShape = _prototype.shape.Draw();
                 actualCanvas.Children.Add(newShape);
             }
         }
 
         private void canvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            _shapes.Add((IShape)_prototype.Clone());
-
             _isDrawing = false;
-
-            Title = "Up";
+            if (actualCanvas.Children[actualCanvas.Children.Count - 1] == new UIElement())
+            {
+                actualCanvas.Children.RemoveAt(actualCanvas.Children.Count - 1);
+            }
         }
 
         private void ClrPcker_Background_SelectedColorChanged_1(object sender, RoutedPropertyChangedEventArgs<Color?> e)
         {
-            _selectedColor = (Color)e.NewValue;
+            if (_prototype.shape == null) return;
+            _prototype.shape.stroke.Color = (Color)e.NewValue!;
         }
     }
 }

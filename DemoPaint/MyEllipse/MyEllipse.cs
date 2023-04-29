@@ -11,11 +11,12 @@ namespace MyEllipse
     {
         public Point Start { get; set; }
         public Point End { get; set; }
-
         public string Name => "Ellipse";
         public string Icon => "Images/ellipse.png";
-        public Color? color { get; set; } = null;
-        public int? thickness { get; set; } = null;
+        public SolidColorBrush stroke { get; set; } = new SolidColorBrush(Colors.Black);
+        public DoubleCollection strokeDashArray { get; set; } = new DoubleCollection(2);
+        public PenLineCap strokeDashCap { get; set; } = PenLineCap.Flat;
+        public double thickness { get; set; } = 2;
 
         public void UpdateStart(Point p)
         {
@@ -26,13 +27,8 @@ namespace MyEllipse
             End = p;
         }
 
-        public UIElement Draw(Color color, int thickness)
+        public UIElement Draw()
         {
-            if (this.color == null)
-            {
-                this.color = color;
-            }
-
             double width = Math.Abs(End.X - Start.X);
             double height = Math.Abs(End.Y - Start.Y);
 
@@ -40,12 +36,14 @@ namespace MyEllipse
             {
                 Width = width,
                 Height = height,
-                Stroke = new SolidColorBrush((Color)this.color),
+                Stroke = stroke,
+                StrokeDashArray = strokeDashArray,
+                StrokeDashCap = strokeDashCap,
                 StrokeThickness = thickness
             };
 
-            Canvas.SetLeft(shape, Start.X);
-            Canvas.SetTop(shape, Start.Y);
+            Canvas.SetLeft(shape, Math.Min(Start.X, End.X));
+            Canvas.SetTop(shape, Math.Min(Start.Y, End.Y));
             return shape;
         }
 

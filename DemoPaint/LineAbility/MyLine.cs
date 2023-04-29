@@ -10,12 +10,13 @@ namespace LineAbility
     {
         public Point Start { get; set; }
         public Point End { get; set; }
-
         public string Name => "Line";
         public string Icon => "Images/line.png";
-        public Color? color { get; set; } = null;
-        public int? thickness { get; set; } =null;
-       
+        public SolidColorBrush stroke { get; set; } = new SolidColorBrush(Colors.Black);
+        public DoubleCollection strokeDashArray { get; set; } = new DoubleCollection(2);
+        public PenLineCap strokeDashCap { get; set; } = PenLineCap.Flat;
+        public double thickness { get; set; } = 2;
+
         public void UpdateStart(Point p)
         {
             Start = p;
@@ -25,21 +26,18 @@ namespace LineAbility
             End = p;
         }
 
-        public UIElement Draw(Color color, int thickness)
+        public UIElement Draw()
         {
-          if(this.color == null)
-            {
-                this.color = color;
-            }
-
             return new Line()
             {
                 X1 = Start.X,
                 Y1 = Start.Y,
                 X2 = End.X,
                 Y2 = End.Y,
-                Stroke = new SolidColorBrush((Color)this.color),
-                StrokeThickness = (int)thickness
+                Stroke = stroke,
+                StrokeDashArray = strokeDashArray,
+                StrokeDashCap = strokeDashCap,
+                StrokeThickness = thickness
             };
         }
 

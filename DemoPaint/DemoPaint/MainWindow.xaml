@@ -34,6 +34,7 @@
             </StackPanel>
         </Grid>
         <Canvas Grid.Row="1" Background="Transparent" Name="actualCanvas">
+            
         </Canvas>
         <Canvas Grid.Row="1" Background="Transparent"  Name="aboveCanvas" MouseDown="canvas_MouseDown" MouseMove="canvas_MouseMove" MouseUp="canvas_MouseUp">
         </Canvas>
