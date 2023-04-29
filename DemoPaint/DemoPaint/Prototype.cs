@@ -5,6 +5,7 @@ using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace DemoPaint
@@ -13,5 +14,6 @@ namespace DemoPaint
     {
         public IShape shape { get; set; } = null;
         public String type { get; set; } = "Line";
+        public Color color { get; set; } = Colors.Black;
     }
 }

@@ -49,7 +49,13 @@ namespace MyEllipse
 
         public object Clone()
         {
-            return MemberwiseClone();
+            return new MyEllipse()
+            {
+                stroke = new SolidColorBrush(Colors.Black),
+                strokeDashArray = new DoubleCollection(2),
+                strokeDashCap = PenLineCap.Flat,
+                thickness = 2,
+            };
         }
     }
 }

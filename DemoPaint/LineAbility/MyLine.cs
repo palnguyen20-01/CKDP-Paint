@@ -43,7 +43,13 @@ namespace LineAbility
 
         public object Clone()
         {
-            return MemberwiseClone();
+            return new MyLine()
+            {
+                stroke = new SolidColorBrush(Colors.Black),
+                strokeDashArray = new DoubleCollection(2),
+                strokeDashCap = PenLineCap.Flat,
+                thickness = 2,
+            };
         }
 
     }

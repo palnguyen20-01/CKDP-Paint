@@ -102,6 +102,7 @@ namespace DemoPaint
             Point _start = e.GetPosition(actualCanvas);
 
             _prototype.shape = (IShape)_abilities[_prototype.type].Clone();
+            _prototype.shape.stroke.Color = _prototype.color;
             _prototype.shape.UpdateStart(_start);
             actualCanvas.Children.Add(new UIElement());
         }
@@ -132,7 +133,7 @@ namespace DemoPaint
         private void ClrPcker_Background_SelectedColorChanged_1(object sender, RoutedPropertyChangedEventArgs<Color?> e)
         {
             if (_prototype.shape == null) return;
-            _prototype.shape.stroke.Color = (Color)e.NewValue!;
+            _prototype.color = (Color)e.NewValue!;
         }
     }
 }
