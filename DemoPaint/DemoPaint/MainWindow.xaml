@@ -10,7 +10,7 @@
         WindowState="Maximized">
     <Grid Background="Transparent" >
         <Grid.RowDefinitions>
-            <RowDefinition Height="100"></RowDefinition>
+            <RowDefinition Height="70"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid>
@@ -18,12 +18,50 @@
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
-
                 <ColumnDefinition Width="3*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <StackPanel VerticalAlignment="Center">
                 <TextBlock Text="Color" HorizontalAlignment="Center"></TextBlock>
-            <xctk:ColorPicker Name="ClrPcker_Background" SelectedColorChanged="ClrPcker_Background_SelectedColorChanged_1" SelectedColor="Black"></xctk:ColorPicker>
+                <xctk:ColorPicker Name="ClrPcker_Background" SelectedColorChanged="ClrPcker_Background_SelectedColorChanged_1" SelectedColor="Black"></xctk:ColorPicker>
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical">
+                <ComboBox Name="strokeCombobox" Width="85" Height="20" Margin="0 0 0 10" SelectedIndex="0" SelectionChanged="strokeCombobox_SelectionChanged" VerticalContentAlignment="Center">
+                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3"></Line>
+                    </ComboBoxItem>
+                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="2" StrokeDashCap="Square"></Line>
+                    </ComboBoxItem>
+                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2" StrokeDashCap="Square"></Line>
+                    </ComboBoxItem>
+                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2 2" StrokeDashCap="Square"></Line>
+                    </ComboBoxItem>
+                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="2" StrokeDashCap="Round"></Line>
+                    </ComboBoxItem>
+                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2" StrokeDashCap="Round"></Line>
+                    </ComboBoxItem>
+                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2 2" StrokeDashCap="Round"></Line>
+                    </ComboBoxItem>
+                </ComboBox>
+                <ComboBox Name="thicknessCombobox" Width="85" Height="20" SelectedIndex="0" SelectionChanged="thicknessCombobox_SelectionChanged" VerticalContentAlignment="Center">
+                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="2"></Line>
+                    </ComboBoxItem>
+                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3"></Line>
+                    </ComboBoxItem>
+                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="4"></Line>
+                    </ComboBoxItem>
+                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="5"></Line>
+                    </ComboBoxItem>
+                </ComboBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Name="abilitiesStackPanel" Grid.Column="3" >
                 <StackPanel.Resources>
@@ -34,7 +72,6 @@
             </StackPanel>
         </Grid>
         <Canvas Grid.Row="1" Background="Transparent" Name="actualCanvas">
-            
         </Canvas>
         <Canvas Grid.Row="1" Background="Transparent"  Name="aboveCanvas" MouseDown="canvas_MouseDown" MouseMove="canvas_MouseMove" MouseUp="canvas_MouseUp">
         </Canvas>

@@ -13,7 +13,15 @@ namespace DemoPaint
     class Prototype
     {
         public IShape shape { get; set; } = null;
+        public Format format { get; set; } = new Format();
         public String type { get; set; } = "Line";
-        public Color color { get; set; } = Colors.Black;
+
+        public void applyFormat()
+        {
+            shape.stroke.Color = format.stroke.Color;
+            shape.strokeDashArray = format.strokeDashArray;
+            shape.strokeDashCap = format.strokeDashCap;
+            shape.thickness = format.thickness;
+        }
     }
 }
