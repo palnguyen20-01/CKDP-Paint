@@ -15,6 +15,9 @@
     <None Remove="Images\redo.png" />
     <None Remove="Images\square.png" />
     <None Remove="Images\undo.png" />
+    <None Remove="Images\zoom-in.png" />
+    <None Remove="Images\zoom-out.png" />
+    <None Remove="Images\zoom.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +36,9 @@
     <Resource Include="Images\redo.png" />
     <Resource Include="Images\square.png" />
     <Resource Include="Images\undo.png" />
+    <Resource Include="Images\zoom-in.png" />
+    <Resource Include="Images\zoom-out.png" />
+    <Resource Include="Images\zoom.png" />
   </ItemGroup>
 
 </Project>

@@ -31,12 +31,15 @@ namespace DemoPaint
         public MainWindow()
         {
             InitializeComponent();
+            actualCanvas.LayoutTransform = canvas_ScaleTranform;
+            aboveCanvas.LayoutTransform = canvas_ScaleTranform;
         }
 
         Dictionary<string, IShape> _abilities = new Dictionary<string, IShape>();
         bool _isDrawing = false;
         Prototype _prototype = new Prototype();
         Stack<UIElement> redoBuffer= new Stack<UIElement>();
+        ScaleTransform canvas_ScaleTranform = new ScaleTransform();
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -160,6 +163,38 @@ namespace DemoPaint
             if(redoBuffer.Count == 0) return;
             var lastObj = redoBuffer.Pop();
             actualCanvas.Children.Add(lastObj);
+        }
+
+        private void canvas_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (e.Delta > 0)
+            {
+                canvas_ScaleTranform.ScaleX *= 1.2;
+                canvas_ScaleTranform.ScaleY *= 1.2;
+            }
+            else
+            {
+                canvas_ScaleTranform.ScaleX /= 1.2;
+                canvas_ScaleTranform.ScaleY /= 1.2;
+            }
+        }
+
+        private void zoomInButton_Click(object sender, RoutedEventArgs e)
+        {
+            canvas_ScaleTranform.ScaleX *= 1.2;
+            canvas_ScaleTranform.ScaleY *= 1.2;
+        }
+
+        private void zoomOutButton_Click(object sender, RoutedEventArgs e)
+        {
+            canvas_ScaleTranform.ScaleX /= 1.2;
+            canvas_ScaleTranform.ScaleY /= 1.2;
+        }
+
+        private void resetZoomButton_Click(object sender, RoutedEventArgs e)
+        {
+            canvas_ScaleTranform.ScaleX = 1;
+            canvas_ScaleTranform.ScaleY = 1;
         }
     }
 }
