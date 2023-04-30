@@ -12,7 +12,9 @@
     <None Remove="Images\ellipse.png" />
     <None Remove="Images\line.png" />
     <None Remove="Images\rectangle.png" />
+    <None Remove="Images\redo.png" />
     <None Remove="Images\square.png" />
+    <None Remove="Images\undo.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,7 +30,9 @@
     <Resource Include="Images\ellipse.png" />
     <Resource Include="Images\line.png" />
     <Resource Include="Images\rectangle.png" />
+    <Resource Include="Images\redo.png" />
     <Resource Include="Images\square.png" />
+    <Resource Include="Images\undo.png" />
   </ItemGroup>
 
 </Project>

@@ -10,22 +10,51 @@
         WindowState="Maximized">
     <Grid Background="Transparent" >
         <Grid.RowDefinitions>
-            <RowDefinition Height="70"></RowDefinition>
+            <RowDefinition Height="75"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
+        <!--Menu-->
         <Grid>
+            <!--Definition-->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
+
                 <ColumnDefinition Width="3*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="Color" HorizontalAlignment="Center"></TextBlock>
-                <xctk:ColorPicker Name="ClrPcker_Background" SelectedColorChanged="ClrPcker_Background_SelectedColorChanged_1" SelectedColor="Black"></xctk:ColorPicker>
+            <!--Undo, Redo-->
+            <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center" >
+                <StackPanel.Resources>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Margin" Value="7,0,7,0"/>
+                    </Style>
+                </StackPanel.Resources>
+                <Button x:Name="undoButton" Height="40" Click="undoButton_Click">
+                    <Image  Source="Images/undo.png"/>
+                </Button>
+                <Button x:Name="redoButton" Height="40" Click="redoButton_Click">
+                    <Image Source="Images/redo.png"/>
+                </Button>
             </StackPanel>
-            <StackPanel Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Vertical">
-                <ComboBox Name="strokeCombobox" Width="85" Height="20" Margin="0 0 0 10" SelectedIndex="0" SelectionChanged="strokeCombobox_SelectionChanged" VerticalContentAlignment="Center">
+       
+            <!--Color, Stroke, Thickness-->
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <StackPanel VerticalAlignment="Center" Grid.Row="1" Grid.ColumnSpan="2">
+                    <TextBlock Text="Color" HorizontalAlignment="Center"></TextBlock>
+                    <xctk:ColorPicker Name="ClrPcker_Background" SelectedColorChanged="ClrPcker_Background_SelectedColorChanged_1" SelectedColor="Black"></xctk:ColorPicker>
+                </StackPanel>
+                <StackPanel VerticalAlignment="Center" Grid.Column="0">
+                    <TextBlock Text="Stroke" HorizontalAlignment="Center"></TextBlock>
+                <ComboBox Name="strokeCombobox" Height="20" SelectedIndex="0" SelectionChanged="strokeCombobox_SelectionChanged" VerticalContentAlignment="Center">
                     <ComboBoxItem Height="15" VerticalContentAlignment="Center">
                         <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3"></Line>
                     </ComboBoxItem>
@@ -48,7 +77,10 @@
                         <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2 2" StrokeDashCap="Round"></Line>
                     </ComboBoxItem>
                 </ComboBox>
-                <ComboBox Name="thicknessCombobox" Width="85" Height="20" SelectedIndex="0" SelectionChanged="thicknessCombobox_SelectionChanged" VerticalContentAlignment="Center">
+                </StackPanel>
+                <StackPanel VerticalAlignment="Center" Grid.Column="1">
+                    <TextBlock Text="Thickness" HorizontalAlignment="Center"></TextBlock>
+                <ComboBox Name="thicknessCombobox" Height="20" SelectedIndex="0" SelectionChanged="thicknessCombobox_SelectionChanged" VerticalContentAlignment="Center">
                     <ComboBoxItem Height="15" VerticalContentAlignment="Center">
                         <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="2"></Line>
                     </ComboBoxItem>
@@ -62,7 +94,9 @@
                         <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="5"></Line>
                     </ComboBoxItem>
                 </ComboBox>
-            </StackPanel>
+                </StackPanel>
+            </Grid>
+            <!--Shape-->
             <StackPanel Orientation="Horizontal" Name="abilitiesStackPanel" Grid.Column="3" >
                 <StackPanel.Resources>
                     <Style TargetType="{x:Type Button}">
@@ -71,6 +105,7 @@
                 </StackPanel.Resources>
             </StackPanel>
         </Grid>
+        <!--Paint Board-->
         <Canvas Grid.Row="1" Background="Transparent" Name="actualCanvas">
         </Canvas>
         <Canvas Grid.Row="1" Background="Transparent"  Name="aboveCanvas" MouseDown="canvas_MouseDown" MouseMove="canvas_MouseMove" MouseUp="canvas_MouseUp">

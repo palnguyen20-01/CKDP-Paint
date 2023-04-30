@@ -36,7 +36,7 @@ namespace DemoPaint
         Dictionary<string, IShape> _abilities = new Dictionary<string, IShape>();
         bool _isDrawing = false;
         Prototype _prototype = new Prototype();
-
+        Stack<UIElement> redoBuffer= new Stack<UIElement>();
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -145,6 +145,21 @@ namespace DemoPaint
         private void thicknessCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             _prototype.format.thickness = ((thicknessCombobox.SelectedItem as ComboBoxItem).Content as Line).StrokeThickness;
+        }
+
+        private void undoButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(actualCanvas.Children.Count == 0) return;
+            var lastObj = actualCanvas.Children[actualCanvas.Children.Count-1];
+            redoBuffer.Push(lastObj);
+            actualCanvas.Children.Remove(lastObj);
+        }
+
+        private void redoButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(redoBuffer.Count == 0) return;
+            var lastObj = redoBuffer.Pop();
+            actualCanvas.Children.Add(lastObj);
         }
     }
 }
