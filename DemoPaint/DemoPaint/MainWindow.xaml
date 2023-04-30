@@ -24,6 +24,11 @@
 
                 <ColumnDefinition Width="3*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
+            <!--Save, import-->
+            <StackPanel Orientation="Horizontal" Grid.Column="0" HorizontalAlignment="Center">
+                <Button Content="Export" Name="exportButton" Click="exportButton_Click"/>
+                <Button Content="Import" Name="importButton" Click="importButton_Click"/>
+            </StackPanel>
             <!--Undo, Redo-->
             <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center" >
                 <StackPanel.Resources>

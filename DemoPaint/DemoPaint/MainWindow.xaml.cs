@@ -196,5 +196,49 @@ namespace DemoPaint
             canvas_ScaleTranform.ScaleX = 1;
             canvas_ScaleTranform.ScaleY = 1;
         }
+
+        private void exportButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.SaveFileDialog();
+            dialog.Filter = "PNG (*.png)|*.png";
+
+            if (dialog.ShowDialog() == true)
+            {
+                string path = dialog.FileName;               
+                SaveCanvasToImage(actualCanvas, path);
+            }
+        }
+        private void importButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.Filter = "PNG (*.png)|*.png";
+
+            if (dialog.ShowDialog() == true)
+            {
+                string path = dialog.FileName;
+          
+                ImageBrush brush = new ImageBrush();
+                brush.ImageSource = new BitmapImage(new Uri(path, UriKind.Absolute));
+                actualCanvas.Background = brush;
+            }
+        }
+
+        private void SaveCanvasToImage(Canvas canvas, string filename)
+        {
+            RenderTargetBitmap renderBitmap = new RenderTargetBitmap((int)canvas.ActualWidth, (int)canvas.ActualHeight,
+             96d, 96d, PixelFormats.Pbgra32);
+            canvas.Measure(new Size((int)canvas.ActualWidth, (int)canvas.ActualHeight));
+            canvas.Arrange(new Rect(new Size((int)canvas.ActualWidth, (int)canvas.ActualHeight)));
+
+            renderBitmap.Render(canvas);
+        
+            PngBitmapEncoder pngEncoder = new PngBitmapEncoder();
+            pngEncoder.Frames.Add(BitmapFrame.Create(renderBitmap));
+
+            using (FileStream file = File.Create(filename))
+            {
+                pngEncoder.Save(file);
+            }          
+        }
     }
 }
