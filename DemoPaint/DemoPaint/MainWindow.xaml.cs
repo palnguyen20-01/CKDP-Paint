@@ -104,6 +104,11 @@ namespace DemoPaint
             _isDrawing = true;
             Point _start = e.GetPosition(actualCanvas);
 
+            if (!_abilities.ContainsKey(_prototype.type))
+            {
+                _isDrawing = false;
+                return;
+            }
             _prototype.shape = (IShape)_abilities[_prototype.type].Clone();
             _prototype.applyFormat();
             _prototype.shape.UpdateStart(_start);
@@ -127,7 +132,7 @@ namespace DemoPaint
         private void canvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
             _isDrawing = false;
-            if (actualCanvas.Children[actualCanvas.Children.Count - 1] == new UIElement())
+            if (actualCanvas.Children.Count != 0 && actualCanvas.Children[actualCanvas.Children.Count - 1] == new UIElement())
             {
                 actualCanvas.Children.RemoveAt(actualCanvas.Children.Count - 1);
             }
