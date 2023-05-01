@@ -224,7 +224,11 @@ namespace DemoPaint
           
                 ImageBrush brush = new ImageBrush();
                 brush.ImageSource = new BitmapImage(new Uri(path, UriKind.Absolute));
-                actualCanvas.Background = brush;
+
+                Image image = new Image();
+                image.Source = brush.ImageSource;
+                actualCanvas.Children.Add(image);
+                //actualCanvas.Background = brush;
             }
         }
 
