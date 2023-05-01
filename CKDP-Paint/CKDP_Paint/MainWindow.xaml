@@ -64,6 +64,14 @@
                             <Fluent:ScreenTip Title="Eraser" Text="Delete an object"/>
                         </Fluent:Button.ToolTip>
                     </Fluent:Button>
+                    <Fluent:Button Header="Move" Click="moveButton_Click">
+                        <Fluent:Button.LargeIcon>
+                            <Image Source="Images/move.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Fluent:Button.LargeIcon>
+                        <Fluent:Button.ToolTip>
+                            <Fluent:ScreenTip Title="Move" Text="Move an object"/>
+                        </Fluent:Button.ToolTip>
+                    </Fluent:Button>
                 </Fluent:RibbonGroupBox>
                 <Fluent:RibbonGroupBox Header="Abilities">
                     <Border BorderThickness="1,1,1,1" Height="70" BorderBrush="Black">

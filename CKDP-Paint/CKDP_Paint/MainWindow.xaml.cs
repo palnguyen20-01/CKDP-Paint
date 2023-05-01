@@ -23,6 +23,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 using Xceed.Wpf.AvalonDock.Controls;
+using static System.Formats.Asn1.AsnWriter;
 using static System.Windows.Forms.AxHost;
 
 namespace CKDP_Paint
@@ -42,11 +43,14 @@ namespace CKDP_Paint
         Dictionary<string, IShape> _abilities = new Dictionary<string, IShape>();
         bool _isDrawing = false;
         bool _isErasing= false;
-        static Point dragStart = new Point();
+        bool _isMoving= false;
         Prototype _prototype = new Prototype();
-        List<IShape> shapeList = new List<IShape>();
         Stack<UIElement> redoBuffer= new Stack<UIElement>();
+        List<IShape> shapeList = new List<IShape>();
         Stack<IShape> redoShapeBuffer= new Stack<IShape>();
+        UIElement movingUIElement;
+        IShape movingShape;
+        Point movingStart;
         ScaleTransform canvas_ScaleTranform = new ScaleTransform();
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -97,6 +101,7 @@ namespace CKDP_Paint
         private void ability_Click(object sender, RoutedEventArgs e)
         {
             _isErasing = false;
+            _isMoving = false;
             aboveCanvas.Cursor = Cursors.Arrow;
 
             var button = (Button)sender;
@@ -124,6 +129,15 @@ namespace CKDP_Paint
                 Point _point = e.GetPosition(actualCanvas);
                 deletePainting(_point);
             }
+            else if(_isMoving)
+            {
+                movingStart = e.GetPosition(actualCanvas);
+                movingUIElement = detectShapeByPosition(movingStart);
+                if (actualCanvas.Children.Contains(movingUIElement))
+                {
+                    movingShape = shapeList[actualCanvas.Children.IndexOf(movingUIElement)];
+                }
+            }
             else
             {
                 _isDrawing = true;
@@ -144,7 +158,13 @@ namespace CKDP_Paint
 
         private void canvas_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_isDrawing)
+            if (_isMoving)
+            {
+                if (!actualCanvas.Children.Contains(movingUIElement)) return;
+                Point _point = e.GetPosition(actualCanvas);
+                moveShape(_point); 
+            }
+            else if(_isDrawing)
             {
                 actualCanvas.Children.RemoveAt(actualCanvas.Children.Count - 1);
                 shapeList.RemoveAt(shapeList.Count - 1);
@@ -160,7 +180,12 @@ namespace CKDP_Paint
 
         private void canvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (_isDrawing)
+            if (_isMoving)
+            {
+                movingStart = new Point(0,0);
+                movingUIElement = new UIElement();
+            }
+            else if (_isDrawing)
             {
                 _isDrawing = false;
                 if (actualCanvas.Children.Count != 0 && actualCanvas.Children[actualCanvas.Children.Count - 1] == new UIElement())
@@ -289,35 +314,11 @@ namespace CKDP_Paint
             }          
         }
 
-        private void drag_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            var element = (UIElement)sender;
-            dragStart = e.GetPosition(element);
-            element.CaptureMouse();
-        }
-
-        private void drag_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            var element = (UIElement)sender;
-            dragStart = new Point();
-            element.ReleaseMouseCapture();
-        }
-
-        private void drag_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (dragStart != new Point() && e.LeftButton == MouseButtonState.Pressed)
-            {
-                var element = (UIElement)sender;
-                var p2 = e.GetPosition(actualCanvas);
-                Canvas.SetLeft(element, p2.X - dragStart.X);
-                Canvas.SetTop(element, p2.Y - dragStart.Y);
-            }
-        }
-
-
         private void eraserButton_Click(object sender, RoutedEventArgs e)
         {
             _isErasing = true;
+            _isMoving = false;
+            _isDrawing = false;
             aboveCanvas.Cursor = Cursors.Cross;
         }
 
@@ -447,6 +448,73 @@ namespace CKDP_Paint
 
             shapeList.RemoveAt(actualCanvas.Children.IndexOf(element));
             actualCanvas.Children.Remove(element);
+        }
+
+        private void moveButton_Click(object sender, RoutedEventArgs e)
+        {
+            _isMoving = true;
+            _isErasing = false;
+            _isDrawing = false;
+            aboveCanvas.Cursor = Cursors.Hand;
+        }
+
+        private void moveShape(Point _point)
+        {
+            double deltaX = _point.X - movingStart.X;
+            double deltaY = _point.Y - movingStart.Y;
+            movingStart = _point;
+            movingShape.UpdateStart(new Point(movingShape.Start.X + deltaX, movingShape.Start.Y + deltaY));
+            movingShape.UpdateEnd(new Point(movingShape.End.X + deltaX, movingShape.End.Y + deltaY));
+            switch (movingShape.GetType().Name)
+            {
+                case "MyLine":
+                    {
+                        (movingUIElement as Line).X1 = movingShape.Start.X;
+                        (movingUIElement as Line).Y1 = movingShape.Start.Y;
+                        (movingUIElement as Line).X2 = movingShape.End.X;
+                        (movingUIElement as Line).Y2 = movingShape.End.Y;
+                        break;
+                    }
+                case "MyRectangle": case "MySquare":
+                    {
+                        Canvas.SetLeft(movingUIElement, Math.Min(movingShape.Start.X, movingShape.End.X));
+                        Canvas.SetTop(movingUIElement, Math.Min(movingShape.Start.Y, movingShape.End.Y));
+                        break;
+                    }
+                case "MyCircle":
+                    {
+                        double diameter = Math.Min(Math.Abs(movingShape.End.X - movingShape.Start.X), Math.Abs(movingShape.End.Y - movingShape.Start.Y));
+
+                        int x_sign;
+                        int y_sign;
+                        if (movingShape.End.X > movingShape.Start.X)
+                        {
+                            x_sign = 1;
+                        }
+                        else
+                        {
+                            x_sign = -1;
+                        }
+
+                        if (movingShape.End.Y > movingShape.Start.Y)
+                        {
+                            y_sign = 1;
+                        }
+                        else
+                        {
+                            y_sign = -1;
+                        }
+                        Canvas.SetLeft(movingUIElement, Math.Min(movingShape.Start.X, movingShape.Start.X + x_sign * diameter));
+                        Canvas.SetTop(movingUIElement, Math.Min(movingShape.Start.Y, movingShape.Start.Y + y_sign * diameter));
+                        break;
+                    }
+                case "MyEllipse":
+                    {
+                        Canvas.SetLeft(movingUIElement, Math.Min(movingShape.Start.X, movingShape.End.X));
+                        Canvas.SetTop(movingUIElement, Math.Min(movingShape.Start.Y, movingShape.End.Y));
+                        break;
+                    }
+            }
         }
     }
 }

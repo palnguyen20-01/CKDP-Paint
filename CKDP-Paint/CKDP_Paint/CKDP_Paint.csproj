@@ -15,6 +15,7 @@
     <None Remove="Images\fill-color.png" />
     <None Remove="Images\import.png" />
     <None Remove="Images\line.png" />
+    <None Remove="Images\move.png" />
     <None Remove="Images\rectangle.png" />
     <None Remove="Images\redo.png" />
     <None Remove="Images\square.png" />
@@ -41,6 +42,7 @@
     <Resource Include="Images\fill-color.png" />
     <Resource Include="Images\import.png" />
     <Resource Include="Images\line.png" />
+    <Resource Include="Images\move.png" />
     <Resource Include="Images\rectangle.png" />
     <Resource Include="Images\redo.png" />
     <Resource Include="Images\square.png" />
