@@ -26,7 +26,7 @@ namespace DemoPaint
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Fluent.RibbonWindow
     {
         public MainWindow()
         {
@@ -205,7 +205,7 @@ namespace DemoPaint
             if (dialog.ShowDialog() == true)
             {
                 string path = dialog.FileName;               
-                SaveCanvasToImage(actualCanvas, path);
+                saveCanvasToImage(actualCanvas, path);
             }
         }
         private void importButton_Click(object sender, RoutedEventArgs e)
@@ -223,7 +223,7 @@ namespace DemoPaint
             }
         }
 
-        private void SaveCanvasToImage(Canvas canvas, string filename)
+        private void saveCanvasToImage(Canvas canvas, string filename)
         {
             RenderTargetBitmap renderBitmap = new RenderTargetBitmap((int)canvas.ActualWidth, (int)canvas.ActualHeight,
              96d, 96d, PixelFormats.Pbgra32);

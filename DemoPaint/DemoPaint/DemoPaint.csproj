@@ -10,6 +10,8 @@
   <ItemGroup>
     <None Remove="Images\circle.png" />
     <None Remove="Images\ellipse.png" />
+    <None Remove="Images\export.png" />
+    <None Remove="Images\import.png" />
     <None Remove="Images\line.png" />
     <None Remove="Images\rectangle.png" />
     <None Remove="Images\redo.png" />
@@ -22,6 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.5.0" />
+    <PackageReference Include="Fluent.Ribbon" Version="9.0.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +34,8 @@
   <ItemGroup>
     <Resource Include="Images\circle.png" />
     <Resource Include="Images\ellipse.png" />
+    <Resource Include="Images\export.png" />
+    <Resource Include="Images\import.png" />
     <Resource Include="Images\line.png" />
     <Resource Include="Images\rectangle.png" />
     <Resource Include="Images\redo.png" />
