@@ -314,9 +314,9 @@ namespace CKDP_Paint
         {
             for(int i = actualCanvas.Children.Count - 1; i >= 0 ; i--)
             {
-                switch (actualCanvas.Children[i].GetType().Name)
+                switch (shapeList[i].GetType().Name)
                 {
-                    case "Line":
+                    case "MyLine":
                         {
                             double a = -(shapeList[i].End.Y - shapeList[i].Start.Y);
                             double b = (shapeList[i].End.X - shapeList[i].Start.X);
@@ -332,7 +332,7 @@ namespace CKDP_Paint
                             }
                             else continue;
                         }
-                    case "Rectangle": case "Square":
+                    case "MyRectangle": case "MySquare":
                         {
                             double thickness = shapeList[i].thickness;
                             if ((point.X <= Math.Max(shapeList[i].Start.X, shapeList[i].End.X) &&
@@ -359,11 +359,46 @@ namespace CKDP_Paint
                             }
                             else continue;
                         }
-                    case "Circle":
+                    case "MyCircle":
                         {
-                            return actualCanvas.Children[i];
+                            double width = Math.Abs(shapeList[i].End.X - shapeList[i].Start.X);
+                            double height = Math.Abs(shapeList[i].End.Y - shapeList[i].Start.Y);
+                            double diameter = Math.Min(width, height);
+                            double radius = diameter/2;
+                            double thickness = shapeList[i].thickness;
+                            int x_sign;
+                            int y_sign;
+                            if (shapeList[i].End.X > shapeList[i].Start.X)
+                            {
+                                x_sign = 1;
+                            }
+                            else
+                            {
+                                x_sign = -1;
+                            }
+
+                            if (shapeList[i].End.Y > shapeList[i].Start.Y)
+                            {
+                                y_sign = 1;
+                            }
+                            else
+                            {
+                                y_sign = -1;
+                            }
+
+                            Point center = new Point
+                            (
+                                Math.Min(shapeList[i].Start.X, shapeList[i].Start.X + x_sign * diameter) + radius,
+                                Math.Min(shapeList[i].Start.Y, shapeList[i].Start.Y + y_sign * diameter) + radius
+                            );
+                            double distance = Math.Sqrt(Math.Pow(point.X - center.X, 2) + Math.Pow(point.Y - center.Y, 2));
+                            if (distance <= radius && distance >= radius - thickness)
+                            {
+                                return actualCanvas.Children[i];
+                            }
+                            else continue;
                         }
-                    case "Ellipse":
+                    case "MyEllipse":
                         {
                             return actualCanvas.Children[i];
                         }
