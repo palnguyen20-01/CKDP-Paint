@@ -46,6 +46,7 @@ namespace CKDP_Paint
         Prototype _prototype = new Prototype();
         List<IShape> shapeList = new List<IShape>();
         Stack<UIElement> redoBuffer= new Stack<UIElement>();
+        Stack<IShape> redoShapeBuffer= new Stack<IShape>();
         ScaleTransform canvas_ScaleTranform = new ScaleTransform();
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -186,16 +187,21 @@ namespace CKDP_Paint
         private void undoButton_Click(object sender, RoutedEventArgs e)
         {
             if(actualCanvas.Children.Count == 0) return;
-            var lastObj = actualCanvas.Children[actualCanvas.Children.Count-1];
+            var lastObj = actualCanvas.Children[actualCanvas.Children.Count - 1];
+            var lastShape = shapeList[shapeList.Count - 1];
             redoBuffer.Push(lastObj);
+            redoShapeBuffer.Push(lastShape);
             actualCanvas.Children.Remove(lastObj);
+            shapeList.Remove(lastShape);
         }
 
         private void redoButton_Click(object sender, RoutedEventArgs e)
         {
             if(redoBuffer.Count == 0) return;
             var lastObj = redoBuffer.Pop();
+            var lastShape = redoShapeBuffer.Pop();
             actualCanvas.Children.Add(lastObj);
+            shapeList.Add(lastShape);
         }
 
         private void canvas_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -411,6 +417,10 @@ namespace CKDP_Paint
         {
             UIElement element = detectShapeByPosition(point);
             if (actualCanvas.Children.IndexOf(element) == -1) return;
+
+            redoBuffer.Push(element);
+            redoShapeBuffer.Push(shapeList[actualCanvas.Children.IndexOf(element)]);
+
             shapeList.RemoveAt(actualCanvas.Children.IndexOf(element));
             actualCanvas.Children.Remove(element);
         }
