@@ -8,6 +8,8 @@ namespace MyContract
     {
         string Name { get; }
         string Icon { get; }
+        public Point Start { get; set; }
+        public Point End { get; set; }
         public SolidColorBrush stroke { get; set; }
         public DoubleCollection strokeDashArray { get; set; }
         public PenLineCap strokeDashCap { get; set; }

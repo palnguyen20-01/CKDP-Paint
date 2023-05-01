@@ -40,7 +40,7 @@
                     </Fluent:Button>
                 </Fluent:RibbonGroupBox>
                 <Fluent:RibbonGroupBox Header="Tools">
-                    <Fluent:Button Header="Add" Click="undoButton_Click">
+                    <Fluent:Button Header="Undo" Click="undoButton_Click">
                         <Fluent:Button.LargeIcon>
                               <Image Source="Images/undo.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Fluent:Button.LargeIcon>
@@ -48,12 +48,20 @@
                             <Fluent:ScreenTip Title="Undo" Text="Undo"/>
                         </Fluent:Button.ToolTip>
                     </Fluent:Button>
-                    <Fluent:Button Header="Delete" Click="redoButton_Click">
+                    <Fluent:Button Header="Redo" Click="redoButton_Click">
                         <Fluent:Button.LargeIcon>
                             <Image Source="Images/redo.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Fluent:Button.LargeIcon>
                         <Fluent:Button.ToolTip>
                             <Fluent:ScreenTip Title="Redo" Text="Redo"/>
+                        </Fluent:Button.ToolTip>
+                    </Fluent:Button>
+                    <Fluent:Button Header="Eraser" Click="eraserButton_Click">
+                        <Fluent:Button.LargeIcon>
+                            <Image Source="Images/eraser.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Fluent:Button.LargeIcon>
+                        <Fluent:Button.ToolTip>
+                            <Fluent:ScreenTip Title="Eraser" Text="Delete an object"/>
                         </Fluent:Button.ToolTip>
                     </Fluent:Button>
                 </Fluent:RibbonGroupBox>
@@ -118,6 +126,7 @@
                         </ComboBox>
                     </StackPanel>
                 </Fluent:RibbonGroupBox>
+                
                 <Fluent:RibbonGroupBox Header="Zoom">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
                         <StackPanel.Resources>

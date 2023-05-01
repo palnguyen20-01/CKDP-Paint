@@ -1,5 +1,6 @@
 ﻿using MyContract;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
@@ -21,6 +22,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
+using Xceed.Wpf.AvalonDock.Controls;
+using static System.Windows.Forms.AxHost;
 
 namespace CKDP_Paint
 {
@@ -38,7 +41,10 @@ namespace CKDP_Paint
 
         Dictionary<string, IShape> _abilities = new Dictionary<string, IShape>();
         bool _isDrawing = false;
+        bool _isErasing= false;
+        static Point dragStart = new Point();
         Prototype _prototype = new Prototype();
+        List<IShape> shapeList = new List<IShape>();
         Stack<UIElement> redoBuffer= new Stack<UIElement>();
         ScaleTransform canvas_ScaleTranform = new ScaleTransform();
 
@@ -89,6 +95,8 @@ namespace CKDP_Paint
         }
         private void ability_Click(object sender, RoutedEventArgs e)
         {
+            _isErasing = false;
+            aboveCanvas.Cursor = Cursors.Arrow;
 
             var button = (Button)sender;
             string name = (string)button.Tag;
@@ -110,18 +118,27 @@ namespace CKDP_Paint
 
         private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            _isDrawing = true;
-            Point _start = e.GetPosition(actualCanvas);
-
-            if (!_abilities.ContainsKey(_prototype.type))
+            if (_isErasing)
             {
-                _isDrawing = false;
-                return;
+                Point _point = e.GetPosition(actualCanvas);
+                deletePainting(_point);
             }
-            _prototype.shape = (IShape)_abilities[_prototype.type].Clone();
-            _prototype.applyFormat();
-            _prototype.shape.UpdateStart(_start);
-            actualCanvas.Children.Add(new UIElement());
+            else
+            {
+                _isDrawing = true;
+                Point _start = e.GetPosition(actualCanvas);
+
+                if (!_abilities.ContainsKey(_prototype.type))
+                {
+                    _isDrawing = false;
+                    return;
+                }
+                _prototype.shape = (IShape)_abilities[_prototype.type].Clone();
+                _prototype.applyFormat();
+                _prototype.shape.UpdateStart(_start);
+                actualCanvas.Children.Add(new UIElement());
+                shapeList.Add(_prototype.shape);
+            }
         }
 
         private void canvas_MouseMove(object sender, MouseEventArgs e)
@@ -129,12 +146,14 @@ namespace CKDP_Paint
             if (_isDrawing)
             {
                 actualCanvas.Children.RemoveAt(actualCanvas.Children.Count - 1);
+                shapeList.RemoveAt(shapeList.Count - 1);
 
                 Point _end = e.GetPosition(actualCanvas);
                 _prototype.shape.UpdateEnd(_end);
 
                 UIElement newShape = _prototype.shape.Draw();
                 actualCanvas.Children.Add(newShape);
+                shapeList.Add(_prototype.shape);
             }
         }
 
@@ -144,12 +163,12 @@ namespace CKDP_Paint
             if (actualCanvas.Children.Count != 0 && actualCanvas.Children[actualCanvas.Children.Count - 1] == new UIElement())
             {
                 actualCanvas.Children.RemoveAt(actualCanvas.Children.Count - 1);
+                shapeList.RemoveAt(shapeList.Count - 1);
             }
         }
 
         private void ClrPcker_Background_SelectedColorChanged_1(object sender, RoutedPropertyChangedEventArgs<Color?> e)
         {
-            if (_prototype.shape == null) return;
             _prototype.format.stroke.Color = (Color)e.NewValue!;
         }
 
@@ -257,6 +276,108 @@ namespace CKDP_Paint
             {
                 pngEncoder.Save(file);
             }          
+        }
+
+        private void drag_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var element = (UIElement)sender;
+            dragStart = e.GetPosition(element);
+            element.CaptureMouse();
+        }
+
+        private void drag_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            var element = (UIElement)sender;
+            dragStart = new Point();
+            element.ReleaseMouseCapture();
+        }
+
+        private void drag_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (dragStart != new Point() && e.LeftButton == MouseButtonState.Pressed)
+            {
+                var element = (UIElement)sender;
+                var p2 = e.GetPosition(actualCanvas);
+                Canvas.SetLeft(element, p2.X - dragStart.X);
+                Canvas.SetTop(element, p2.Y - dragStart.Y);
+            }
+        }
+
+
+        private void eraserButton_Click(object sender, RoutedEventArgs e)
+        {
+            _isErasing = true;
+            aboveCanvas.Cursor = Cursors.Cross;
+        }
+
+        private UIElement detectShapeByPosition(Point point)
+        {
+            for(int i = actualCanvas.Children.Count - 1; i >= 0 ; i--)
+            {
+                switch (actualCanvas.Children[i].GetType().Name)
+                {
+                    case "Line":
+                        {
+                            double a = -(shapeList[i].End.Y - shapeList[i].Start.Y);
+                            double b = (shapeList[i].End.X - shapeList[i].Start.X);
+                            double c = a * -(shapeList[i].Start.X) + b * -(shapeList[i].Start.Y);
+                            double distance = Math.Abs(a * point.X + b * point.Y + c) / Math.Sqrt(a * a + b * b);
+                            if (distance <= shapeList[i].thickness / 2 &&
+                                point.X <= Math.Max(shapeList[i].Start.X, shapeList[i].End.X) &&
+                                point.X >= Math.Min(shapeList[i].Start.X, shapeList[i].End.X) &&
+                                point.Y <= Math.Max(shapeList[i].Start.Y, shapeList[i].End.Y) &&
+                                point.Y >= Math.Min(shapeList[i].Start.Y, shapeList[i].End.Y))
+                            {
+                                return actualCanvas.Children[i];
+                            }
+                            else continue;
+                        }
+                    case "Rectangle": case "Square":
+                        {
+                            double thickness = shapeList[i].thickness;
+                            if ((point.X <= Math.Max(shapeList[i].Start.X, shapeList[i].End.X) &&
+                                point.X >= Math.Min(shapeList[i].Start.X, shapeList[i].End.X) &&
+                                point.Y <= (Math.Min(shapeList[i].Start.Y, shapeList[i].End.Y) + thickness) &&
+                                point.Y >= Math.Min(shapeList[i].Start.Y, shapeList[i].End.Y))
+                                ||
+                                (point.X <= Math.Max(shapeList[i].Start.X, shapeList[i].End.X) &&
+                                point.X >= Math.Min(shapeList[i].Start.X, shapeList[i].End.X) &&
+                                point.Y <= Math.Max(shapeList[i].Start.Y, shapeList[i].End.Y) &&
+                                point.Y >= (Math.Max(shapeList[i].Start.Y, shapeList[i].End.Y) - thickness))
+                                ||
+                                (point.X <= (Math.Min(shapeList[i].Start.X, shapeList[i].End.X) + thickness) &&
+                                point.X >= Math.Min(shapeList[i].Start.X, shapeList[i].End.X) &&
+                                point.Y <= Math.Max(shapeList[i].Start.Y, shapeList[i].End.Y) &&
+                                point.Y >= Math.Min(shapeList[i].Start.Y, shapeList[i].End.Y))
+                                ||
+                                (point.X <= Math.Max(shapeList[i].Start.X, shapeList[i].End.X) &&
+                                point.X >= (Math.Max(shapeList[i].Start.X, shapeList[i].End.X) - thickness) &&
+                                point.Y <= Math.Max(shapeList[i].Start.Y, shapeList[i].End.Y) &&
+                                point.Y >= Math.Min(shapeList[i].Start.Y, shapeList[i].End.Y)))
+                            {
+                                return actualCanvas.Children[i];
+                            }
+                            else continue;
+                        }
+                    case "Circle":
+                        {
+                            return actualCanvas.Children[i];
+                        }
+                    case "Ellipse":
+                        {
+                            return actualCanvas.Children[i];
+                        }
+                }
+            }
+            return new UIElement();
+        }
+
+        private void deletePainting(Point point)
+        {
+            UIElement element = detectShapeByPosition(point);
+            if (actualCanvas.Children.IndexOf(element) == -1) return;
+            shapeList.RemoveAt(actualCanvas.Children.IndexOf(element));
+            actualCanvas.Children.Remove(element);
         }
     }
 }

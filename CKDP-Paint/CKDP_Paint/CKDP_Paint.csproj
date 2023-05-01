@@ -10,7 +10,9 @@
   <ItemGroup>
     <None Remove="Images\circle.png" />
     <None Remove="Images\ellipse.png" />
+    <None Remove="Images\eraser.png" />
     <None Remove="Images\export.png" />
+    <None Remove="Images\fill-color.png" />
     <None Remove="Images\import.png" />
     <None Remove="Images\line.png" />
     <None Remove="Images\rectangle.png" />
@@ -34,7 +36,9 @@
   <ItemGroup>
     <Resource Include="Images\circle.png" />
     <Resource Include="Images\ellipse.png" />
+    <Resource Include="Images\eraser.png" />
     <Resource Include="Images\export.png" />
+    <Resource Include="Images\fill-color.png" />
     <Resource Include="Images\import.png" />
     <Resource Include="Images\line.png" />
     <Resource Include="Images\rectangle.png" />
