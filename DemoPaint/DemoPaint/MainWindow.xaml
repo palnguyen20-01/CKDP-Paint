@@ -1,143 +1,153 @@
-﻿<Window x:Class="DemoPaint.MainWindow"
+﻿<Fluent:RibbonWindow x:Class="DemoPaint.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DemoPaint"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:Fluent="clr-namespace:Fluent;assembly=Fluent"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded"
         WindowState="Maximized">
-    <Grid Background="Transparent" >
-        <Grid.RowDefinitions>
-            <RowDefinition Height="75"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-        </Grid.RowDefinitions>
-        <!--Menu-->
-        <Grid>
-            <!--Definition-->
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
+    <DockPanel LastChildFill="True">
+        <Fluent:Ribbon Name="ribbon" DockPanel.Dock="Top">
+            <Fluent:Ribbon.Menu>
+                <Fluent:Backstage Header="File">
+                    <Fluent:BackstageTabControl>
+                        <Fluent:BackstageTabItem Header="About" >
+                            <StackPanel HorizontalAlignment="Left" Margin="10">
+                                <TextBlock Text="Server" Margin="0, 10, 0, 10"/>
+                                <TextBox Width="200" Height="35"/>
+                            </StackPanel>
+                        </Fluent:BackstageTabItem>
 
-                <ColumnDefinition Width="3*"></ColumnDefinition>
-            </Grid.ColumnDefinitions>
-            <!--Save, import-->
-            <StackPanel Orientation="Horizontal" Grid.Column="0" HorizontalAlignment="Center">
-                <Button Content="Export" Name="exportButton" Click="exportButton_Click"/>
-                <Button Content="Import" Name="importButton" Click="importButton_Click"/>
-            </StackPanel>
-            <!--Undo, Redo-->
-            <StackPanel Orientation="Horizontal" Grid.Column="1" HorizontalAlignment="Center" >
-                <StackPanel.Resources>
-                    <Style TargetType="{x:Type Button}">
-                        <Setter Property="Margin" Value="7,0,7,0"/>
-                    </Style>
-                </StackPanel.Resources>
-                <Button x:Name="undoButton" Height="40" Click="undoButton_Click">
-                    <Image  Source="Images/undo.png"/>
-                </Button>
-                <Button x:Name="redoButton" Height="40" Click="redoButton_Click">
-                    <Image Source="Images/redo.png"/>
-                </Button>
-            </StackPanel>
-       
-            <!--Color, Stroke, Thickness-->
-            <Grid Grid.Column="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                </Grid.ColumnDefinitions>
-                <StackPanel VerticalAlignment="Center" Grid.Row="1" Grid.ColumnSpan="2">
-                    <TextBlock Text="Color" HorizontalAlignment="Center"></TextBlock>
-                    <xctk:ColorPicker Name="ClrPcker_Background" SelectedColorChanged="ClrPcker_Background_SelectedColorChanged_1" SelectedColor="Black"></xctk:ColorPicker>
-                </StackPanel>
-                <StackPanel VerticalAlignment="Center" Grid.Column="0">
-                    <TextBlock Text="Stroke" HorizontalAlignment="Center"></TextBlock>
-                <ComboBox Name="strokeCombobox" Height="20" SelectedIndex="0" SelectionChanged="strokeCombobox_SelectionChanged" VerticalContentAlignment="Center">
-                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3"></Line>
-                    </ComboBoxItem>
-                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="2" StrokeDashCap="Square"></Line>
-                    </ComboBoxItem>
-                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2" StrokeDashCap="Square"></Line>
-                    </ComboBoxItem>
-                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2 2" StrokeDashCap="Square"></Line>
-                    </ComboBoxItem>
-                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="2" StrokeDashCap="Round"></Line>
-                    </ComboBoxItem>
-                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2" StrokeDashCap="Round"></Line>
-                    </ComboBoxItem>
-                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2 2" StrokeDashCap="Round"></Line>
-                    </ComboBoxItem>
-                </ComboBox>
-                </StackPanel>
-                <StackPanel VerticalAlignment="Center" Grid.Column="1">
-                    <TextBlock Text="Thickness" HorizontalAlignment="Center"></TextBlock>
-                <ComboBox Name="thicknessCombobox" Height="20" SelectedIndex="0" SelectionChanged="thicknessCombobox_SelectionChanged" VerticalContentAlignment="Center">
-                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="2"></Line>
-                    </ComboBoxItem>
-                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3"></Line>
-                    </ComboBoxItem>
-                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="4"></Line>
-                    </ComboBoxItem>
-                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="5"></Line>
-                    </ComboBoxItem>
-                </ComboBox>
-                </StackPanel>
-            </Grid>
-            <!--Reset Zoom-->
-            <StackPanel Orientation="Horizontal" Grid.Column="3" HorizontalAlignment="Center" >
-                <StackPanel.Resources>
-                    <Style TargetType="{x:Type Button}">
-                        <Setter Property="Margin" Value="5,0,5,0"/>
-                    </Style>
-                </StackPanel.Resources>
-                <Button x:Name="zoomInButton" Height="30" Click="zoomInButton_Click">
-                    <Image  Source="Images/zoom-in.png"/>
-                </Button>
-                <Button x:Name="zoomOutButton" Height="30" Click="zoomOutButton_Click">
-                    <Image Source="Images/zoom-out.png"/>
-                </Button>
-                <Button x:Name="resetZoomButton" Height="30" Click="resetZoomButton_Click">
-                    <Image Source="Images/zoom.png"/>
-                </Button>
-            </StackPanel>
-            <!--Shape-->
-            <StackPanel Orientation="Horizontal" Name="abilitiesStackPanel" Grid.Column="4" >
-                <StackPanel.Resources>
-                    <Style TargetType="{x:Type Button}">
-                        <Setter Property="Margin" Value="10,0,10,0"/>
-                    </Style>
-                </StackPanel.Resources>
-            </StackPanel>
+                    </Fluent:BackstageTabControl>
+                </Fluent:Backstage>
+
+            </Fluent:Ribbon.Menu>
+            <!--Dashboard-->
+            <Fluent:RibbonTabItem Header="Home">
+                <Fluent:RibbonGroupBox Header="Basic">
+                    <Fluent:Button Header="Import" Click="importButton_Click">
+                        <Fluent:Button.LargeIcon>
+                            <Image Source="Images/import.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Fluent:Button.LargeIcon>
+                    </Fluent:Button>
+                    <Fluent:Button Header="EXport" Click="exportButton_Click">
+                        <Fluent:Button.LargeIcon>
+                            <Image Source="Images/export.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Fluent:Button.LargeIcon>
+                    </Fluent:Button>
+                </Fluent:RibbonGroupBox>
+                <Fluent:RibbonGroupBox Header="Tools">
+                    <Fluent:Button Header="Add" Click="undoButton_Click">
+                        <Fluent:Button.LargeIcon>
+                              <Image Source="Images/undo.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Fluent:Button.LargeIcon>
+                        <Fluent:Button.ToolTip>
+                            <Fluent:ScreenTip Title="Undo" Text="Undo"/>
+                        </Fluent:Button.ToolTip>
+                    </Fluent:Button>
+                    <Fluent:Button Header="Delete" Click="redoButton_Click">
+                        <Fluent:Button.LargeIcon>
+                            <Image Source="Images/redo.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Fluent:Button.LargeIcon>
+                        <Fluent:Button.ToolTip>
+                            <Fluent:ScreenTip Title="Redo" Text="Redo"/>
+                        </Fluent:Button.ToolTip>
+                    </Fluent:Button>
+                </Fluent:RibbonGroupBox>
+                <Fluent:RibbonGroupBox Header="Abilities">
+                    <Border BorderThickness="1,1,1,1" Height="70" BorderBrush="Black">
+                        <StackPanel Orientation="Horizontal" Name="abilitiesStackPanel" Grid.Column="4" Width="200"
+                                   >
+                            <StackPanel.Resources>
+                                <Style TargetType="{x:Type Button}">
+                                    <Setter Property="Margin" Value="10,0,10,0"/>
+                                </Style>
+                            </StackPanel.Resources>
+                        </StackPanel>
+                    </Border>
+                </Fluent:RibbonGroupBox>
+                <Fluent:RibbonGroupBox Header="Style">
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Color" HorizontalAlignment="Center"></TextBlock>
+                        <xctk:ColorPicker Name="ClrPcker_Background" SelectedColorChanged="ClrPcker_Background_SelectedColorChanged_1" SelectedColor="Black"></xctk:ColorPicker>
+                    </StackPanel>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Stroke" HorizontalAlignment="Center"></TextBlock>
+                        <ComboBox Name="strokeCombobox" Height="20" SelectedIndex="0" SelectionChanged="strokeCombobox_SelectionChanged" VerticalContentAlignment="Center">
+                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3"></Line>
+                            </ComboBoxItem>
+                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="2" StrokeDashCap="Square"></Line>
+                            </ComboBoxItem>
+                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2" StrokeDashCap="Square"></Line>
+                            </ComboBoxItem>
+                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2 2" StrokeDashCap="Square"></Line>
+                            </ComboBoxItem>
+                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="2" StrokeDashCap="Round"></Line>
+                            </ComboBoxItem>
+                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2" StrokeDashCap="Round"></Line>
+                            </ComboBoxItem>
+                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2 2" StrokeDashCap="Round"></Line>
+                            </ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Thickness" HorizontalAlignment="Center"></TextBlock>
+                        <ComboBox Name="thicknessCombobox" Height="20" SelectedIndex="0" SelectionChanged="thicknessCombobox_SelectionChanged" VerticalContentAlignment="Center">
+                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="2"></Line>
+                            </ComboBoxItem>
+                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3"></Line>
+                            </ComboBoxItem>
+                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="4"></Line>
+                            </ComboBoxItem>
+                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="5"></Line>
+                            </ComboBoxItem>
+                        </ComboBox>
+                    </StackPanel>
+                </Fluent:RibbonGroupBox>
+                <Fluent:RibbonGroupBox Header="Zoom">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+                        <StackPanel.Resources>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Margin" Value="5,0,5,0"/>
+                            </Style>
+                        </StackPanel.Resources>
+                        <Button x:Name="zoomInButton" Height="30" Click="zoomInButton_Click">
+                            <Image  Source="Images/zoom-in.png"/>
+                        </Button>
+                        <Button x:Name="zoomOutButton" Height="30" Click="zoomOutButton_Click">
+                            <Image Source="Images/zoom-out.png"/>
+                        </Button>
+                        <Button x:Name="resetZoomButton" Height="30" Click="resetZoomButton_Click">
+                            <Image Source="Images/zoom.png"/>
+                        </Button>
+                    </StackPanel>
+                </Fluent:RibbonGroupBox>
+            </Fluent:RibbonTabItem>
+        </Fluent:Ribbon>
+        <Grid>
+            <ScrollViewer Grid.Row="1" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                <Grid>
+                    <Canvas Background="Transparent" Name="actualCanvas" Width="1920" Height="1080">
+                    </Canvas>
+                    <Canvas Background="Transparent"  Name="aboveCanvas" MouseDown="canvas_MouseDown" MouseMove="canvas_MouseMove" MouseUp="canvas_MouseUp" MouseWheel="canvas_MouseWheel" Width="1920" Height="1080">
+                    </Canvas>
+                </Grid>
+            </ScrollViewer>
         </Grid>
-        <!--Paint Board-->
-        <ScrollViewer Grid.Row="1" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <Grid>
-                <Canvas Background="Transparent" Name="actualCanvas" Width="1920" Height="1080">
-                </Canvas>
-                <Canvas Background="Transparent"  Name="aboveCanvas" MouseDown="canvas_MouseDown" MouseMove="canvas_MouseMove" MouseUp="canvas_MouseUp" MouseWheel="canvas_MouseWheel" Width="1920" Height="1080">
-                </Canvas>
-            </Grid>
-        </ScrollViewer>
-    </Grid>
-    
-    
-</Window>
+    </DockPanel>
+      
+</Fluent:RibbonWindow>
