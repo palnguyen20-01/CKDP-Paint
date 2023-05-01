@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -92,6 +93,14 @@ namespace CKDP_Paint
             var button = (Button)sender;
             string name = (string)button.Tag;
             _prototype.type = name;
+            foreach(Button i_btn in abilitiesStackPanel.Children)
+            {
+                i_btn.Effect = new System.Windows.Media.Effects.DropShadowEffect()
+                {
+                    BlurRadius = 0,
+                    ShadowDepth = 0
+                };
+            }
             button.Effect = new System.Windows.Media.Effects.DropShadowEffect()
             {
                 BlurRadius = 10,
