@@ -160,11 +160,16 @@ namespace CKDP_Paint
 
         private void canvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            _isDrawing = false;
-            if (actualCanvas.Children.Count != 0 && actualCanvas.Children[actualCanvas.Children.Count - 1] == new UIElement())
+            if (_isDrawing)
             {
-                actualCanvas.Children.RemoveAt(actualCanvas.Children.Count - 1);
-                shapeList.RemoveAt(shapeList.Count - 1);
+                _isDrawing = false;
+                if (actualCanvas.Children.Count != 0 && actualCanvas.Children[actualCanvas.Children.Count - 1] == new UIElement())
+                {
+                    actualCanvas.Children.RemoveAt(actualCanvas.Children.Count - 1);
+                    shapeList.RemoveAt(shapeList.Count - 1);
+                }
+                redoBuffer.Clear();
+                redoShapeBuffer.Clear();
             }
         }
 
@@ -406,7 +411,26 @@ namespace CKDP_Paint
                         }
                     case "MyEllipse":
                         {
-                            return actualCanvas.Children[i];
+                            Point left_top = new Point
+                            (
+                                Math.Min(shapeList[i].Start.X, shapeList[i].End.X),
+                                Math.Min(shapeList[i].Start.Y, shapeList[i].End.Y)
+                            );
+                            double a = Math.Abs(shapeList[i].End.X - shapeList[i].Start.X) / 2;
+                            double b = Math.Abs(shapeList[i].End.Y - shapeList[i].Start.Y) / 2;
+                            double thickness = shapeList[i].thickness;
+                            Point center = new Point(left_top.X + a, left_top.Y + b);
+                            double result_1 = 
+                                Math.Pow(point.X - center.X, 2) / Math.Pow(a, 2) + 
+                                Math.Pow(point.Y - center.Y, 2) / Math.Pow(b, 2);
+                            double result_2 = 
+                                Math.Pow(point.X - center.X, 2) / Math.Pow(a - thickness, 2) + 
+                                Math.Pow(point.Y - center.Y, 2) / Math.Pow(b - thickness, 2);
+                            if (result_1 <= 1 && result_2 >= 1)
+                            {
+                                return actualCanvas.Children[i];
+                            }
+                            else continue;
                         }
                 }
             }
