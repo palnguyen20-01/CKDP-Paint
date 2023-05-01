@@ -59,7 +59,7 @@
                 </Fluent:RibbonGroupBox>
                 <Fluent:RibbonGroupBox Header="Abilities">
                     <Border BorderThickness="1,1,1,1" Height="70" BorderBrush="Black">
-                        <StackPanel Orientation="Horizontal" Name="abilitiesStackPanel" Grid.Column="4" Width="200"
+                        <StackPanel Orientation="Horizontal" Name="abilitiesStackPanel" Grid.Column="4" Width="350"
                                    >
                             <StackPanel.Resources>
                                 <Style TargetType="{x:Type Button}">
