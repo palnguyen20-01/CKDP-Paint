@@ -21,7 +21,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 
-namespace DemoPaint
+namespace CKDP_Paint
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

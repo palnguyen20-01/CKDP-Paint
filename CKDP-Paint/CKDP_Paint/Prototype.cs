@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace DemoPaint
+namespace CKDP_Paint
 {
     class Prototype
     {

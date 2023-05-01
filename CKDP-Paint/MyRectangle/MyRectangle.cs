@@ -1,17 +1,18 @@
 using System;
+using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using System.Windows;
 using MyContract;
+using System.Windows.Shapes;
 
-namespace LineAbility
+namespace MyRectangle
 {
-    public class MyLine : IShape
+    public class MyRectangle : IShape
     {
         public Point Start { get; set; }
         public Point End { get; set; }
-        public string Name => "Line";
-        public string Icon => "Images/line.png";
+        public string Name => "Rectangle";
+        public string Icon => "Images/rectangle.png";
         public SolidColorBrush stroke { get; set; } = new SolidColorBrush(Colors.Black);
         public DoubleCollection strokeDashArray { get; set; } = new DoubleCollection(2);
         public PenLineCap strokeDashCap { get; set; } = PenLineCap.Flat;
@@ -28,22 +29,27 @@ namespace LineAbility
 
         public UIElement Draw()
         {
-            return new Line()
+            double width = Math.Abs(End.X - Start.X);
+            double height = Math.Abs(End.Y - Start.Y);
+
+            var shape = new Rectangle()
             {
-                X1 = Start.X,
-                Y1 = Start.Y,
-                X2 = End.X,
-                Y2 = End.Y,
+                Width = width,
+                Height = height,
                 Stroke = stroke,
                 StrokeDashArray = strokeDashArray,
                 StrokeDashCap = strokeDashCap,
                 StrokeThickness = thickness
             };
+
+            Canvas.SetLeft(shape, Math.Min(Start.X, End.X));
+            Canvas.SetTop(shape, Math.Min(Start.Y, End.Y));
+            return shape;
         }
 
         public object Clone()
         {
-            return new MyLine()
+            return new MyRectangle()
             {
                 stroke = new SolidColorBrush(Colors.Black),
                 strokeDashArray = new DoubleCollection(2),
@@ -51,6 +57,5 @@ namespace LineAbility
                 thickness = 2,
             };
         }
-
     }
 }

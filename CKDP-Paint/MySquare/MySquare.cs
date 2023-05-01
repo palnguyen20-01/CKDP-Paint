@@ -5,14 +5,14 @@ using System.Windows;
 using MyContract;
 using System.Windows.Shapes;
 
-namespace RectangleAbility
+namespace MyRectangle
 {
-    public class MyRectangle : IShape
+    public class MySquare : IShape
     {
         public Point Start { get; set; }
         public Point End { get; set; }
-        public string Name => "Rectangle";
-        public string Icon => "Images/rectangle.png";
+        public string Name => "Square";
+        public string Icon => "Images/square.png";
         public SolidColorBrush stroke { get; set; } = new SolidColorBrush(Colors.Black);
         public DoubleCollection strokeDashArray { get; set; } = new DoubleCollection(2);
         public PenLineCap strokeDashCap { get; set; } = PenLineCap.Flat;
@@ -29,27 +29,46 @@ namespace RectangleAbility
 
         public UIElement Draw()
         {
-            double width = Math.Abs(End.X - Start.X);
-            double height = Math.Abs(End.Y - Start.Y);
+            double width = Math.Min(Math.Abs(End.X - Start.X), Math.Abs(End.Y - Start.Y));
+
+            int x_sign;
+            int y_sign;
+            if (End.X > Start.X)
+            {
+                x_sign = 1;
+            }
+            else
+            {
+                x_sign = -1;
+            }
+
+            if (End.Y > Start.Y)
+            {
+                y_sign = 1;
+            }
+            else
+            {
+                y_sign = -1;
+            }
 
             var shape = new Rectangle()
             {
                 Width = width,
-                Height = height,
+                Height = width,
                 Stroke = stroke,
                 StrokeDashArray = strokeDashArray,
                 StrokeDashCap = strokeDashCap,
                 StrokeThickness = thickness
             };
 
-            Canvas.SetLeft(shape, Math.Min(Start.X, End.X));
-            Canvas.SetTop(shape, Math.Min(Start.Y, End.Y));
+            Canvas.SetLeft(shape, Math.Min(Start.X, Start.X + x_sign * width));
+            Canvas.SetTop(shape, Math.Min(Start.Y, Start.Y + y_sign * width));
             return shape;
         }
 
         public object Clone()
         {
-            return new MyRectangle()
+            return new MySquare()
             {
                 stroke = new SolidColorBrush(Colors.Black),
                 strokeDashArray = new DoubleCollection(2),

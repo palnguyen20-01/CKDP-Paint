@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace DemoPaint
+namespace CKDP_Paint
 {
     /// <summary>
     /// Interaction logic for App.xaml
