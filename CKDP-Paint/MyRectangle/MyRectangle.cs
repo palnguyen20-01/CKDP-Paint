@@ -53,7 +53,7 @@ namespace MyRectangle
             {
                 Start = new Point(Start.X, Start.Y),
                 End = new Point(End.X, End.Y),
-                stroke = stroke,
+                stroke = stroke.Clone(),
                 strokeDashArray = strokeDashArray,
                 strokeDashCap = strokeDashCap,
                 thickness = thickness,

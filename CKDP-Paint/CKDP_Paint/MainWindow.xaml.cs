@@ -299,6 +299,7 @@ namespace CKDP_Paint
             {
                 Point _point = e.GetPosition(actualCanvas);
 
+                if (clipboardShape == null) return;
                 IShape tempShape = (IShape)clipboardShape.Clone();
 
                 tempShape.UpdateStart(tempShape.Start + (_point - clipboardPoint));
