@@ -231,15 +231,15 @@ namespace CKDP_Paint
             History _undo = undoHistoryBuffer.Pop();
             if (_undo.Name == "Add")
             {
+                redoHistoryBuffer.Push(new History_Delete(_undo.Object, shapeList[actualCanvas.Children.IndexOf(_undo.Object)]));
                 shapeList.RemoveAt(actualCanvas.Children.IndexOf(_undo.Object));
                 actualCanvas.Children.Remove(_undo.Object);
-                redoHistoryBuffer.Push(_undo);
             }
             else if(_undo.Name == "Delete")
             {
                 actualCanvas.Children.Add(_undo.Object);
                 shapeList.Add((_undo as History_Delete).ObjectShape);
-                redoHistoryBuffer.Push(_undo);
+                redoHistoryBuffer.Push(new History_Add(_undo.Object));
             }
             else if(_undo.Name == "Move")
             {
@@ -247,15 +247,42 @@ namespace CKDP_Paint
                 movingShape = shapeList[actualCanvas.Children.IndexOf(_undo.Object)];
                 movingStart = new Point(Math.Min(movingShape.Start.X, movingShape.End.X), Math.Min(movingShape.Start.Y, movingShape.End.Y));
                 Point newPoint = (_undo as History_Move).Position;
-                moveShape(newPoint);
                 (_undo as History_Move).Position = movingStart;
                 redoHistoryBuffer.Push(_undo);
+                moveShape(newPoint);
+                movingUIElement = new UIElement();
+                movingShape = null;
             }
         }
 
         private void redoButton_Click(object sender, RoutedEventArgs e)
         {
-            
+            if (redoHistoryBuffer.Count == 0) return;
+            History _redo = redoHistoryBuffer.Pop();
+            if (_redo.Name == "Add")
+            {
+                undoHistoryBuffer.Push(new History_Delete(_redo.Object, shapeList[actualCanvas.Children.IndexOf(_redo.Object)]));
+                shapeList.RemoveAt(actualCanvas.Children.IndexOf(_redo.Object));
+                actualCanvas.Children.Remove(_redo.Object);
+            }
+            else if (_redo.Name == "Delete")
+            {
+                actualCanvas.Children.Add(_redo.Object);
+                shapeList.Add((_redo as History_Delete).ObjectShape);
+                undoHistoryBuffer.Push(new History_Add(_redo.Object));
+            }
+            else if (_redo.Name == "Move")
+            {
+                movingUIElement = _redo.Object;
+                movingShape = shapeList[actualCanvas.Children.IndexOf(_redo.Object)];
+                movingStart = new Point(Math.Min(movingShape.Start.X, movingShape.End.X), Math.Min(movingShape.Start.Y, movingShape.End.Y));
+                Point newPoint = (_redo as History_Move).Position;
+                (_redo as History_Move).Position = movingStart;
+                undoHistoryBuffer.Push(_redo);
+                moveShape(newPoint);
+                movingUIElement = new UIElement();
+                movingShape = null;
+            }
         }
 
         private void canvas_MouseWheel(object sender, MouseWheelEventArgs e)
