@@ -18,6 +18,7 @@
     <None Remove="Images\move.png" />
     <None Remove="Images\rectangle.png" />
     <None Remove="Images\redo.png" />
+    <None Remove="Images\reload.png" />
     <None Remove="Images\square.png" />
     <None Remove="Images\undo.png" />
     <None Remove="Images\zoom-in.png" />
@@ -45,6 +46,7 @@
     <Resource Include="Images\move.png" />
     <Resource Include="Images\rectangle.png" />
     <Resource Include="Images\redo.png" />
+    <Resource Include="Images\reload.png" />
     <Resource Include="Images\square.png" />
     <Resource Include="Images\undo.png" />
     <Resource Include="Images\zoom-in.png" />
