@@ -62,47 +62,7 @@ namespace CKDP_Paint
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // Tự scan chương trình nạp lên các khả năng của mình
-            var domain = AppDomain.CurrentDomain;
-            var folder = domain.BaseDirectory;
-            var folderInfo = new DirectoryInfo(folder);
-            var dllFiles = folderInfo.GetFiles("*.dll");
-            
-            foreach(var dll in dllFiles)
-            {
-                Debug.WriteLine(dll.FullName);
-                var assembly = Assembly.LoadFrom(dll.FullName);
-
-                var types = assembly.GetTypes();
-                
-                foreach (var type in types)
-                {
-                    if (type.IsClass && 
-                        typeof(IShape).IsAssignableFrom(type))
-                    {
-                        var shape = Activator.CreateInstance(type) as IShape;
-                        _abilities.Add(shape!.Name, shape);
-                    }
-                }   
-            }
-
-            foreach (var ability in _abilities)
-            {
-                var button = new Button()
-                {
-                    Width = 50,
-                    Height = 50,
-                    Content = ability.Value.Name,
-                    Tag = ability.Value.Name,
-                };
-                button.Content = new Image
-                {
-                    Source = new BitmapImage(new Uri(ability.Value.Icon, UriKind.Relative)),
-                    VerticalAlignment = VerticalAlignment.Center,
-                    Stretch = Stretch.UniformToFill,
-                };
-                button.Click += ability_Click;
-                abilitiesStackPanel.Children.Add(button);
-            }
+            loadPlugin();
         }
         private void ability_Click(object sender, RoutedEventArgs e)
         {
@@ -126,6 +86,59 @@ namespace CKDP_Paint
                 BlurRadius = 10,
                 ShadowDepth = 5
             };
+        }
+
+        private void loadPlugin()
+        {
+            var domain = AppDomain.CurrentDomain;
+            var folder = domain.BaseDirectory;
+            var folderInfo = new DirectoryInfo(folder);
+            var dllFiles = folderInfo.GetFiles("*.dll");
+
+            _abilities.Clear();
+            abilitiesStackPanel.Children.Clear();
+
+            foreach (var dll in dllFiles)
+            {
+                Debug.WriteLine(dll.FullName);
+                var assembly = Assembly.LoadFrom(dll.FullName);
+
+                var types = assembly.GetTypes();
+
+                foreach (var type in types)
+                {
+                    if (type.IsClass &&
+                        typeof(IShape).IsAssignableFrom(type))
+                    {
+                        var shape = Activator.CreateInstance(type) as IShape;
+                        _abilities.Add(shape!.Name, shape);
+                    }
+                }
+            }
+
+            foreach (var ability in _abilities)
+            {
+                var button = new Button()
+                {
+                    Width = 50,
+                    Height = 50,
+                    Content = ability.Value.Name,
+                    Tag = ability.Value.Name,
+                };
+                button.Content = new Image
+                {
+                    Source = new BitmapImage(new Uri(ability.Value.Icon, UriKind.Relative)),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Stretch = Stretch.UniformToFill,
+                };
+                button.Click += ability_Click;
+                abilitiesStackPanel.Children.Add(button);
+            }
+        }
+
+        private void reloadPluginButton_Click(object sender, RoutedEventArgs e)
+        {
+            loadPlugin();
         }
 
         private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
@@ -349,10 +362,10 @@ namespace CKDP_Paint
 
         private void saveCanvasToImage(Canvas canvas, string filename)
         {
-            RenderTargetBitmap renderBitmap = new RenderTargetBitmap((int)canvas.ActualWidth, (int)canvas.ActualHeight,
+            RenderTargetBitmap renderBitmap = new RenderTargetBitmap((int)canvas.Width, (int)canvas.Height,
              96d, 96d, PixelFormats.Pbgra32);
-            canvas.Measure(new Size((int)canvas.ActualWidth, (int)canvas.ActualHeight));
-            canvas.Arrange(new Rect(new Size((int)canvas.ActualWidth, (int)canvas.ActualHeight)));
+            canvas.Measure(new Size((int)canvas.Width, (int)canvas.Height));
+            canvas.Arrange(new Rect(new Size((int)canvas.Width, (int)canvas.Height)));
 
             renderBitmap.Render(canvas);
         
@@ -567,5 +580,6 @@ namespace CKDP_Paint
                     }
             }
         }
+
     }
 }

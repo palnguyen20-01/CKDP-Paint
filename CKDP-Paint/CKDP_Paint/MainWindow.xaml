@@ -85,6 +85,16 @@
                         </StackPanel>
                     </Border>
                 </Fluent:RibbonGroupBox>
+                <Fluent:RibbonGroupBox Header="Plugin">
+                    <Fluent:Button Header="Reload" Click="reloadPluginButton_Click">
+                        <Fluent:Button.LargeIcon>
+                            <Image Source="Images/reload.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Fluent:Button.LargeIcon>
+                        <Fluent:Button.ToolTip>
+                            <Fluent:ScreenTip Title="Reload" Text="Reload plugin"/>
+                        </Fluent:Button.ToolTip>
+                    </Fluent:Button>
+                </Fluent:RibbonGroupBox>
                 <Fluent:RibbonGroupBox Header="Style">
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock Text="Color" HorizontalAlignment="Center"></TextBlock>
