@@ -1,4 +1,5 @@
-﻿using MyContract;
+﻿using CKDP_Paint.MyHistory;
+using MyContract;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -44,13 +45,18 @@ namespace CKDP_Paint
         bool _isDrawing = false;
         bool _isErasing= false;
         bool _isMoving= false;
+
         Prototype _prototype = new Prototype();
-        Stack<UIElement> redoBuffer= new Stack<UIElement>();
+
         List<IShape> shapeList = new List<IShape>();
-        Stack<IShape> redoShapeBuffer= new Stack<IShape>();
+
+        Stack<History> undoHistoryBuffer = new Stack<History>();
+        Stack<History> redoHistoryBuffer = new Stack<History>();
+
         UIElement movingUIElement;
         IShape movingShape;
         Point movingStart;
+
         ScaleTransform canvas_ScaleTranform = new ScaleTransform();
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -136,6 +142,8 @@ namespace CKDP_Paint
                 if (actualCanvas.Children.Contains(movingUIElement))
                 {
                     movingShape = shapeList[actualCanvas.Children.IndexOf(movingUIElement)];
+                    undoHistoryBuffer.Push(new History_Move(movingUIElement, new Point(Math.Min(movingShape.Start.X, movingShape.End.X), Math.Min(movingShape.Start.Y, movingShape.End.Y))));
+                    redoHistoryBuffer.Clear();
                 }
             }
             else
@@ -153,6 +161,7 @@ namespace CKDP_Paint
                 _prototype.shape.UpdateStart(_start);
                 actualCanvas.Children.Add(new UIElement());
                 shapeList.Add(_prototype.shape);
+                undoHistoryBuffer.Push(new History_Add(new UIElement()));
             }
         }
 
@@ -168,6 +177,7 @@ namespace CKDP_Paint
             {
                 actualCanvas.Children.RemoveAt(actualCanvas.Children.Count - 1);
                 shapeList.RemoveAt(shapeList.Count - 1);
+                undoHistoryBuffer.Pop();
 
                 Point _end = e.GetPosition(actualCanvas);
                 _prototype.shape.UpdateEnd(_end);
@@ -175,6 +185,7 @@ namespace CKDP_Paint
                 UIElement newShape = _prototype.shape.Draw();
                 actualCanvas.Children.Add(newShape);
                 shapeList.Add(_prototype.shape);
+                undoHistoryBuffer.Push(new History_Add(newShape));
             }
         }
 
@@ -192,9 +203,9 @@ namespace CKDP_Paint
                 {
                     actualCanvas.Children.RemoveAt(actualCanvas.Children.Count - 1);
                     shapeList.RemoveAt(shapeList.Count - 1);
+                    undoHistoryBuffer.Pop();
                 }
-                redoBuffer.Clear();
-                redoShapeBuffer.Clear();
+                redoHistoryBuffer.Clear();
             }
         }
 
@@ -216,22 +227,35 @@ namespace CKDP_Paint
 
         private void undoButton_Click(object sender, RoutedEventArgs e)
         {
-            if(actualCanvas.Children.Count == 0) return;
-            var lastObj = actualCanvas.Children[actualCanvas.Children.Count - 1];
-            var lastShape = shapeList[shapeList.Count - 1];
-            redoBuffer.Push(lastObj);
-            redoShapeBuffer.Push(lastShape);
-            actualCanvas.Children.Remove(lastObj);
-            shapeList.Remove(lastShape);
+            if (undoHistoryBuffer.Count == 0) return;
+            History _undo = undoHistoryBuffer.Pop();
+            if (_undo.Name == "Add")
+            {
+                shapeList.RemoveAt(actualCanvas.Children.IndexOf(_undo.Object));
+                actualCanvas.Children.Remove(_undo.Object);
+                redoHistoryBuffer.Push(_undo);
+            }
+            else if(_undo.Name == "Delete")
+            {
+                actualCanvas.Children.Add(_undo.Object);
+                shapeList.Add((_undo as History_Delete).ObjectShape);
+                redoHistoryBuffer.Push(_undo);
+            }
+            else if(_undo.Name == "Move")
+            {
+                movingUIElement = _undo.Object;
+                movingShape = shapeList[actualCanvas.Children.IndexOf(_undo.Object)];
+                movingStart = new Point(Math.Min(movingShape.Start.X, movingShape.End.X), Math.Min(movingShape.Start.Y, movingShape.End.Y));
+                Point newPoint = (_undo as History_Move).Position;
+                moveShape(newPoint);
+                (_undo as History_Move).Position = movingStart;
+                redoHistoryBuffer.Push(_undo);
+            }
         }
 
         private void redoButton_Click(object sender, RoutedEventArgs e)
         {
-            if(redoBuffer.Count == 0) return;
-            var lastObj = redoBuffer.Pop();
-            var lastShape = redoShapeBuffer.Pop();
-            actualCanvas.Children.Add(lastObj);
-            shapeList.Add(lastShape);
+            
         }
 
         private void canvas_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -443,8 +467,8 @@ namespace CKDP_Paint
             UIElement element = detectShapeByPosition(point);
             if (actualCanvas.Children.IndexOf(element) == -1) return;
 
-            redoBuffer.Push(element);
-            redoShapeBuffer.Push(shapeList[actualCanvas.Children.IndexOf(element)]);
+            undoHistoryBuffer.Push(new History_Delete(element, shapeList[actualCanvas.Children.IndexOf(element)]));
+            redoHistoryBuffer.Clear();
 
             shapeList.RemoveAt(actualCanvas.Children.IndexOf(element));
             actualCanvas.Children.Remove(element);
