@@ -7,7 +7,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:Fluent="clr-namespace:Fluent;assembly=Fluent"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded"
+        Title="MainWindow" Height="450" Width="1000" Loaded="Window_Loaded"
         WindowState="Maximized">
     <DockPanel LastChildFill="True">
         <Fluent:Ribbon Name="ribbon" DockPanel.Dock="Top">
@@ -33,7 +33,7 @@
                             <Image Source="Images/import.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Fluent:Button.LargeIcon>
                     </Fluent:Button>
-                    <Fluent:Button Header="EXport" Click="exportButton_Click">
+                    <Fluent:Button Header="Export" Click="exportButton_Click">
                         <Fluent:Button.LargeIcon>
                             <Image Source="Images/export.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Fluent:Button.LargeIcon>
@@ -86,53 +86,65 @@
                     </Border>
                 </Fluent:RibbonGroupBox>
                 <Fluent:RibbonGroupBox Header="Style">
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="Color" HorizontalAlignment="Center"></TextBlock>
-                        <xctk:ColorPicker Name="ClrPcker_Background" SelectedColorChanged="ClrPcker_Background_SelectedColorChanged_1" SelectedColor="Black"></xctk:ColorPicker>
-                    </StackPanel>
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="Stroke" HorizontalAlignment="Center"></TextBlock>
-                        <ComboBox Name="strokeCombobox" Height="20" SelectedIndex="0" SelectionChanged="strokeCombobox_SelectionChanged" VerticalContentAlignment="Center">
-                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3"></Line>
-                            </ComboBoxItem>
-                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="2" StrokeDashCap="Square"></Line>
-                            </ComboBoxItem>
-                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2" StrokeDashCap="Square"></Line>
-                            </ComboBoxItem>
-                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2 2" StrokeDashCap="Square"></Line>
-                            </ComboBoxItem>
-                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="2" StrokeDashCap="Round"></Line>
-                            </ComboBoxItem>
-                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2" StrokeDashCap="Round"></Line>
-                            </ComboBoxItem>
-                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2 2" StrokeDashCap="Round"></Line>
-                            </ComboBoxItem>
-                        </ComboBox>
-                    </StackPanel>
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="Thickness" HorizontalAlignment="Center"></TextBlock>
-                        <ComboBox Name="thicknessCombobox" Height="20" SelectedIndex="0" SelectionChanged="thicknessCombobox_SelectionChanged" VerticalContentAlignment="Center">
-                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="2"></Line>
-                            </ComboBoxItem>
-                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3"></Line>
-                            </ComboBoxItem>
-                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="4"></Line>
-                            </ComboBoxItem>
-                            <ComboBoxItem Height="15" VerticalContentAlignment="Center">
-                                <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="5"></Line>
-                            </ComboBoxItem>
-                        </ComboBox>
-                    </StackPanel>
+                    <DockPanel>
+                        <StackPanel Orientation="Vertical">
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Color" HorizontalAlignment="Center"></TextBlock>
+                                <xctk:ColorPicker Name="ClrPcker_Background" SelectedColorChanged="ClrPcker_Background_SelectedColorChanged_1" SelectedColor="Black"></xctk:ColorPicker>
+                            </StackPanel>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Stroke" HorizontalAlignment="Center"></TextBlock>
+                                <ComboBox Name="strokeCombobox" Height="20" SelectedIndex="0" SelectionChanged="strokeCombobox_SelectionChanged" VerticalContentAlignment="Center">
+                                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3"></Line>
+                                    </ComboBoxItem>
+                                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="2" StrokeDashCap="Square"></Line>
+                                    </ComboBoxItem>
+                                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2" StrokeDashCap="Square"></Line>
+                                    </ComboBoxItem>
+                                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2 2" StrokeDashCap="Square"></Line>
+                                    </ComboBoxItem>
+                                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="2" StrokeDashCap="Round"></Line>
+                                    </ComboBoxItem>
+                                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2" StrokeDashCap="Round"></Line>
+                                    </ComboBoxItem>
+                                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3" StrokeDashArray="0 2 2" StrokeDashCap="Round"></Line>
+                                    </ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+                        </StackPanel>
+                        <StackPanel>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="Thickness" HorizontalAlignment="Center"></TextBlock>
+                                <ComboBox Name="thicknessCombobox" Height="20" SelectedIndex="0" SelectionChanged="thicknessCombobox_SelectionChanged" VerticalContentAlignment="Center">
+                                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="2"></Line>
+                                    </ComboBoxItem>
+                                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="3"></Line>
+                                    </ComboBoxItem>
+                                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="4"></Line>
+                                    </ComboBoxItem>
+                                    <ComboBoxItem Height="15" VerticalContentAlignment="Center">
+                                        <Line X1="0" Y1="0" X2="70" Y2="0" Stroke="Black" StrokeThickness="5"></Line>
+                                    </ComboBoxItem>
+                                </ComboBox>
+                            </StackPanel>
+                            <Button  Height="30" Width="30" Margin="0,5,0,0">
+                                <Image Source="Images/fill-color.png"/>
+                            </Button>
+                        </StackPanel>
+                    </DockPanel>
+                    
+                    
+                    
                 </Fluent:RibbonGroupBox>
                 
                 <Fluent:RibbonGroupBox Header="Zoom">
