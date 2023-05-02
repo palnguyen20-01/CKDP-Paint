@@ -16,9 +16,14 @@
                     <Fluent:BackstageTabControl>
                         <Fluent:BackstageTabItem Header="About" >
                             <StackPanel HorizontalAlignment="Left" Margin="10">
-                                <TextBlock Text="Server" Margin="0, 10, 0, 10"/>
-                                <TextBox Width="200" Height="35"/>
+                                <TextBlock Text="MSSV: 20127007" Margin="0, 10, 0, 10"/>
+                                <TextBlock Text="MSSV: 20127045" Margin="0, 10, 0, 10"/>
+                                <TextBlock Text="MSSV: 20127131" Margin="0, 10, 0, 10"/>
+                                <TextBlock Text="MSSV: 20127282" Margin="0, 10, 0, 10"/>
                             </StackPanel>
+                        </Fluent:BackstageTabItem>
+                        <Fluent:BackstageTabItem Header="Quit" MouseDown="BackstageTabItem_MouseDown">
+
                         </Fluent:BackstageTabItem>
 
                     </Fluent:BackstageTabControl>

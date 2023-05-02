@@ -760,10 +760,20 @@ namespace CKDP_Paint
                     string json;
                     while((json = r.ReadLine()) != null )
                     {
-                        ShapeData data = JsonConvert.DeserializeObject<ShapeData>(json);
-                        IShape shape = convertShapeData_IShape(data);
-                        actualCanvas.Children.Add(shape.Draw());
-                        shapeList.Add(shape);
+                        try
+                        {
+                            ShapeData data = JsonConvert.DeserializeObject<ShapeData>(json);
+                            IShape shape = convertShapeData_IShape(data);
+                            actualCanvas.Children.Add(shape.Draw());
+                            shapeList.Add(shape);
+                        }
+                        catch
+                        {
+                            MessageBox.Show("Cannot read data in json file");
+                            actualCanvas.Children.Clear();
+                            shapeList.Clear();
+                            break;
+                        }
                     }
 
                 }
@@ -797,6 +807,17 @@ namespace CKDP_Paint
                         w.WriteLine(jsonString);
                     }
                 }
+            }
+        }
+
+        private void BackstageTabItem_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            var result = MessageBox.Show("Are you sure you want to quit?",
+                "Confirmation", MessageBoxButton.YesNo);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                Application.Current.Shutdown();
             }
         }
     }
