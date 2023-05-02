@@ -34,17 +34,22 @@ namespace CKDP_Paint
     /// </summary>
     public partial class MainWindow : Fluent.RibbonWindow
     {
+        private RenderTargetBitmap _renderTargetBitmap;
         public MainWindow()
         {
             InitializeComponent();
             actualCanvas.LayoutTransform = canvas_ScaleTranform;
             aboveCanvas.LayoutTransform = canvas_ScaleTranform;
+
+            _renderTargetBitmap = new RenderTargetBitmap((int)actualCanvas.Width, (int)actualCanvas.Height, 96, 96, PixelFormats.Default);
+
         }
 
         Dictionary<string, IShape> _abilities = new Dictionary<string, IShape>();
         bool _isDrawing = false;
         bool _isErasing= false;
         bool _isMoving= false;
+        bool _isFilling=false;
 
         Prototype _prototype = new Prototype();
 
@@ -58,6 +63,96 @@ namespace CKDP_Paint
         Point movingStart;
 
         ScaleTransform canvas_ScaleTranform = new ScaleTransform();
+        private void BFSFillColor(Point p, Color newColor)
+        {
+            Color oldColor = GetPixelColor(p.X, p.Y);
+
+            if (oldColor == newColor)
+            {
+                // Already filled with the new color
+                return;
+            }
+
+            Queue<Point> queue = new Queue<Point>();
+            Dictionary<Point, bool> isVisited = new Dictionary<Point, bool>();
+            int [] dx = { -1, 1, 0, 0 };
+            int [] dy = { 0, 0, -1, 1 };
+
+            queue.Enqueue(p);
+            isVisited.Add(p, true);
+
+            var cnt = 0;
+            while (queue.Count > 0)
+            {
+                Point currentPoint = queue.Dequeue();
+                //MessageBox.Show(currentPoint.X.ToString() + "??" + currentPoint.Y.ToString());
+                cnt++;
+                if (cnt > 5000) break;
+                Color getCurrentColor = GetPixelColor(currentPoint.X, currentPoint.Y);
+                if (getCurrentColor.Equals(oldColor))
+                {
+
+                    SetPixelColor(currentPoint.X, currentPoint.Y, newColor);
+                    for (int i = 0; i < 4; ++i) { 
+                        var ux= currentPoint.X + dx[i];
+                        var uy = currentPoint.Y + dy[i];
+                        if (ux>0 && ux < actualCanvas.Width - 1 && uy>0 && uy< actualCanvas.Height - 1)
+                        {
+                            Point NewPoint = new Point(ux, uy);
+                            if (!isVisited.ContainsKey(NewPoint))
+                            {
+                                queue.Enqueue(NewPoint);
+                                isVisited.Add(NewPoint, true);
+
+                            }
+
+                        }
+
+                    }
+                    
+                }
+            }
+            var a = 5;
+            a = 10;
+
+        }
+        private void SetPixelColor(double x, double y, Color color)
+        {
+            int pixelX = (int)(x * actualCanvas.Width / actualCanvas.ActualWidth);
+            int pixelY = (int)(y * actualCanvas.Height / actualCanvas.ActualHeight);
+
+            Rectangle rect = new Rectangle
+            {
+                Fill = new SolidColorBrush(color),
+                Width = 1,
+                Height = 1
+            };
+
+            Canvas.SetLeft(rect, pixelX);
+            Canvas.SetTop(rect, pixelY);
+
+            actualCanvas.Children.Add(rect);
+        }
+
+        
+        private Color GetPixelColor(int x, int y, RenderTargetBitmap bmp)
+        {
+            byte[] pixel = new byte[4];
+            bmp.CopyPixels(new Int32Rect(x, y, 1, 1), pixel, 4, 0);
+            return Color.FromArgb(pixel[3], pixel[2], pixel[1], pixel[0]);
+        }
+        private Color GetPixelColor(double x, double y)
+        {
+            int pixelX = (int)(x * actualCanvas.Width / actualCanvas.ActualWidth);
+            int pixelY = (int)(y * actualCanvas.Height / actualCanvas.ActualHeight);
+
+            _renderTargetBitmap.Render(actualCanvas);
+
+            byte[] pixels = new byte[4];
+            _renderTargetBitmap.CopyPixels(new Int32Rect(pixelX, pixelY, 1, 1), pixels, 4, 0);
+            Color res = Color.FromRgb(pixels[2], pixels[1], pixels[0]);
+            return res;
+        }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -143,12 +238,22 @@ namespace CKDP_Paint
 
         private void canvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            
+            if (_isFilling)
+            {
+                Point _point = e.GetPosition(actualCanvas);
+                BFSFillColor(_point, _prototype.format.stroke.Color);
+                //GetPixelColor(e.GetPosition(actualCanvas).X, e.GetPosition(actualCanvas).Y);
+                //MessageBox.Show(GetPixelColor(e.GetPosition(actualCanvas).X, e.GetPosition(actualCanvas).Y).ToString());
+
+            }
+            //SetPixelColor(e.GetPosition(actualCanvas).X, e.GetPosition(actualCanvas).Y,_prototype.format.stroke.Color);
             if (_isErasing)
             {
                 Point _point = e.GetPosition(actualCanvas);
                 deletePainting(_point);
             }
-            else if(_isMoving)
+            else if (_isMoving)
             {
                 movingStart = e.GetPosition(actualCanvas);
                 movingUIElement = detectShapeByPosition(movingStart);
@@ -184,9 +289,9 @@ namespace CKDP_Paint
             {
                 if (!actualCanvas.Children.Contains(movingUIElement)) return;
                 Point _point = e.GetPosition(actualCanvas);
-                moveShape(_point); 
+                moveShape(_point);
             }
-            else if(_isDrawing)
+            else if (_isDrawing)
             {
                 actualCanvas.Children.RemoveAt(actualCanvas.Children.Count - 1);
                 shapeList.RemoveAt(shapeList.Count - 1);
@@ -382,6 +487,7 @@ namespace CKDP_Paint
         {
             _isErasing = true;
             _isMoving = false;
+            _isFilling = false;
             _isDrawing = false;
             aboveCanvas.Cursor = Cursors.Cross;
         }
