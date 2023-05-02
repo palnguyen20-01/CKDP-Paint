@@ -1,5 +1,7 @@
 ﻿using CKDP_Paint.MyHistory;
+using Microsoft.VisualBasic.Devices;
 using MyContract;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,9 +9,11 @@ using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Linq;
+using System.Net.Http.Json;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -693,6 +697,107 @@ namespace CKDP_Paint
             _isFilling = true;
             _isDrawing = false;
             aboveCanvas.Cursor = Cursors.Pen;
+        }
+
+        private IShape convertShapeData_IShape(ShapeData data)
+        {
+            IShape shape = (IShape)_abilities[data.name].Clone();
+            shape.stroke.Color = (Color)ColorConverter.ConvertFromString(data.strokeColor);
+            var listStringDouble = data.strokeDashArray.Split(" ");
+            DoubleCollection dashArray = new DoubleCollection();
+            foreach(string value in listStringDouble)
+            {
+                if (value != "")
+                {
+                    dashArray.Add(double.Parse(value));
+                }
+            }
+            shape.strokeDashArray = dashArray;
+            switch (data.strokeDashCap)
+            {
+                case ("Flat"):
+                    {
+                        shape.strokeDashCap = PenLineCap.Flat;
+                        break;
+                    }
+                case ("Round"):
+                    {
+                        shape.strokeDashCap = PenLineCap.Round;
+                        break;
+                    }
+                case ("Square"):
+                    {
+                        shape.strokeDashCap = PenLineCap.Square;
+                        break;
+                    }
+                case ("Triangle"):
+                    {
+                        shape.strokeDashCap = PenLineCap.Triangle;
+                        break;
+                    }
+            }
+            shape.thickness = double.Parse(data.strokeThickness);
+            shape.UpdateStart(Point.Parse(data.start));
+            shape.UpdateEnd(Point.Parse(data.end));
+            return shape;
+        }
+
+        private void openButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog();
+            dialog.Filter = "JSON (*.json)|*.json";
+
+            if (dialog.ShowDialog() == true)
+            {
+                actualCanvas.Children.Clear();
+                shapeList.Clear();
+                undoHistoryBuffer.Clear();
+                redoHistoryBuffer.Clear();
+
+                string path = dialog.FileName;
+                using (StreamReader r = new StreamReader(path))
+                {
+                    string json;
+                    while((json = r.ReadLine()) != null )
+                    {
+                        ShapeData data = JsonConvert.DeserializeObject<ShapeData>(json);
+                        IShape shape = convertShapeData_IShape(data);
+                        actualCanvas.Children.Add(shape.Draw());
+                        shapeList.Add(shape);
+                    }
+
+                }
+            }
+        }
+
+        private void saveButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.SaveFileDialog();
+            dialog.Filter = "JSON (*.json)|*.json";
+
+            if (dialog.ShowDialog() == true)
+            {
+                string path = dialog.FileName;
+                using (StreamWriter w = new StreamWriter(path))
+                {
+                    foreach (IShape shape in shapeList)
+                    {
+                        ShapeData data = new ShapeData()
+                        {
+                            name = shape.Name,
+                            start = shape.Start.ToString(),
+                            end = shape.End.ToString(),
+                            strokeColor = shape.stroke.Color.ToString(),
+                            strokeDashArray = shape.strokeDashArray.ToString(),
+                            strokeDashCap = shape.strokeDashCap.ToString(),
+                            strokeThickness = shape.thickness.ToString()
+                        };
+
+                        string jsonString = JsonConvert.SerializeObject(data);
+                        w.WriteLine(jsonString);
+                    }
+                }
+            }
         }
     }
 }

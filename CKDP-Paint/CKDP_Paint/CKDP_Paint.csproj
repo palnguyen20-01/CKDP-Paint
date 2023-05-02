@@ -16,9 +16,11 @@
     <None Remove="Images\import.png" />
     <None Remove="Images\line.png" />
     <None Remove="Images\move.png" />
+    <None Remove="Images\open-file.png" />
     <None Remove="Images\rectangle.png" />
     <None Remove="Images\redo.png" />
     <None Remove="Images\reload.png" />
+    <None Remove="Images\save-file.png" />
     <None Remove="Images\square.png" />
     <None Remove="Images\undo.png" />
     <None Remove="Images\zoom-in.png" />
@@ -29,6 +31,7 @@
   <ItemGroup>
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.5.0" />
     <PackageReference Include="Fluent.Ribbon" Version="9.0.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,9 +47,11 @@
     <Resource Include="Images\import.png" />
     <Resource Include="Images\line.png" />
     <Resource Include="Images\move.png" />
+    <Resource Include="Images\open-file.png" />
     <Resource Include="Images\rectangle.png" />
     <Resource Include="Images\redo.png" />
     <Resource Include="Images\reload.png" />
+    <Resource Include="Images\save-file.png" />
     <Resource Include="Images\square.png" />
     <Resource Include="Images\undo.png" />
     <Resource Include="Images\zoom-in.png" />

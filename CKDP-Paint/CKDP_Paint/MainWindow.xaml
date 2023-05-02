@@ -38,6 +38,16 @@
                             <Image Source="Images/export.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Fluent:Button.LargeIcon>
                     </Fluent:Button>
+                    <Fluent:Button Header="Open" Click="openButton_Click">
+                        <Fluent:Button.LargeIcon>
+                            <Image Source="Images/open-file.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Fluent:Button.LargeIcon>
+                    </Fluent:Button>
+                    <Fluent:Button Header="Save" Click="saveButton_Click">
+                        <Fluent:Button.LargeIcon>
+                            <Image Source="Images/save-file.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Fluent:Button.LargeIcon>
+                    </Fluent:Button>
                 </Fluent:RibbonGroupBox>
                 <Fluent:RibbonGroupBox Header="Tools">
                     <Fluent:Button Header="Undo" Click="undoButton_Click">
