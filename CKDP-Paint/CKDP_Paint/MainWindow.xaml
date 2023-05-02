@@ -180,7 +180,7 @@
         <Grid>
             <ScrollViewer Grid.Row="1" CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <Grid>
-                    <Canvas Background="White" Name="actualCanvas" Width="2000" Height="1080">
+                    <Canvas Background="White" Name="actualCanvas" Width="1920" Height="1080">
                     </Canvas>
                     <Canvas Background="Transparent"  Name="aboveCanvas" MouseDown="canvas_MouseDown" MouseMove="canvas_MouseMove" MouseUp="canvas_MouseUp" MouseWheel="canvas_MouseWheel" Width="1920" Height="1080">
                     </Canvas>
