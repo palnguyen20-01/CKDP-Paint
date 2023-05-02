@@ -1,8 +1,10 @@
 ﻿using CKDP_Paint.MyHistory;
+using ControlzEx.Standard;
 using MyContract;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Diagnostics;
 using System.Diagnostics.Eventing.Reader;
 using System.IO;
@@ -10,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,6 +25,7 @@ using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using System.Xml.Linq;
 using Xceed.Wpf.AvalonDock.Controls;
 using static System.Formats.Asn1.AsnWriter;
@@ -35,12 +39,14 @@ namespace CKDP_Paint
     public partial class MainWindow : Fluent.RibbonWindow
     {
         private RenderTargetBitmap _renderTargetBitmap;
+        private WriteableBitmap _bitmap;
+
         public MainWindow()
         {
             InitializeComponent();
             actualCanvas.LayoutTransform = canvas_ScaleTranform;
             aboveCanvas.LayoutTransform = canvas_ScaleTranform;
-
+            _bitmap = new WriteableBitmap((int)actualCanvas.Width, (int)actualCanvas.Height, 96, 96, PixelFormats.Pbgra32, null);
             _renderTargetBitmap = new RenderTargetBitmap((int)actualCanvas.Width, (int)actualCanvas.Height, 96, 96, PixelFormats.Default);
 
         }
@@ -85,14 +91,15 @@ namespace CKDP_Paint
             while (queue.Count > 0)
             {
                 Point currentPoint = queue.Dequeue();
-                //MessageBox.Show(currentPoint.X.ToString() + "??" + currentPoint.Y.ToString());
                 cnt++;
-                if (cnt > 5000) break;
+                if (cnt > 10000) break;
                 Color getCurrentColor = GetPixelColor(currentPoint.X, currentPoint.Y);
                 if (getCurrentColor.Equals(oldColor))
                 {
 
+                    //SetPixelColorBitMap(currentPoint.X, currentPoint.Y, newColor);
                     SetPixelColor(currentPoint.X, currentPoint.Y, newColor);
+
                     for (int i = 0; i < 4; ++i) { 
                         var ux= currentPoint.X + dx[i];
                         var uy = currentPoint.Y + dy[i];
@@ -112,14 +119,58 @@ namespace CKDP_Paint
                     
                 }
             }
-            var a = 5;
-            a = 10;
+       
+
+        }
+        private void SetPixelColorBitMap(double x, double y, Color color)
+        {
+            int row = (int)x;
+            int column = (int)y;
+            try
+            {
+                // Reserve the back buffer for updates.
+                _bitmap.Lock();
+
+                unsafe
+                {
+                    // Get a pointer to the back buffer.
+                    IntPtr pBackBuffer = _bitmap.BackBuffer;
+
+                    // Find the address of the pixel to draw.
+                    pBackBuffer += row * _bitmap.BackBufferStride;
+                    pBackBuffer += column * 4;
+
+                    // Compute the pixel's color.
+                    byte a = color.A;
+                    byte r = color.R;
+                    byte g = color.G;
+                    byte b = color.B;
+                    int color_data = (a << 24) | (r << 16) | (g << 8) | b;
+
+                    // Assign the color data to the pixel.
+                    *((int*)pBackBuffer) = color_data;
+                }
+
+                // Specify the area of the bitmap that changed.
+                _bitmap.AddDirtyRect(new Int32Rect(row, column, 1, 1));
+            }
+            finally
+            {
+                // Release the back buffer and make it available for display.
+                _bitmap.Unlock();
+            }
+            Image image = new Image();
+            image.Source = _bitmap;
+            //Canvas.SetLeft(image, x);
+            //Canvas.SetTop(image, y);
+            // Thêm Image vào Canvas
+            actualCanvas.Children.Add(image);
 
         }
         private void SetPixelColor(double x, double y, Color color)
         {
-            int pixelX = (int)(x * actualCanvas.Width / actualCanvas.ActualWidth);
-            int pixelY = (int)(y * actualCanvas.Height / actualCanvas.ActualHeight);
+            int pixelX = (int)x;
+            int pixelY = (int)y;
 
             Rectangle rect = new Rectangle
             {
@@ -133,18 +184,10 @@ namespace CKDP_Paint
 
             actualCanvas.Children.Add(rect);
         }
-
-        
-        private Color GetPixelColor(int x, int y, RenderTargetBitmap bmp)
-        {
-            byte[] pixel = new byte[4];
-            bmp.CopyPixels(new Int32Rect(x, y, 1, 1), pixel, 4, 0);
-            return Color.FromArgb(pixel[3], pixel[2], pixel[1], pixel[0]);
-        }
         private Color GetPixelColor(double x, double y)
         {
-            int pixelX = (int)(x * actualCanvas.Width / actualCanvas.ActualWidth);
-            int pixelY = (int)(y * actualCanvas.Height / actualCanvas.ActualHeight);
+            int pixelX = (int)x;
+            int pixelY = (int)y;
 
             _renderTargetBitmap.Render(actualCanvas);
 
@@ -163,6 +206,8 @@ namespace CKDP_Paint
         {
             _isErasing = false;
             _isMoving = false;
+            _isFilling = false;
+            _isDrawing = false;
             aboveCanvas.Cursor = Cursors.Arrow;
 
             var button = (Button)sender;
@@ -243,12 +288,10 @@ namespace CKDP_Paint
             {
                 Point _point = e.GetPosition(actualCanvas);
                 BFSFillColor(_point, _prototype.format.stroke.Color);
-                //GetPixelColor(e.GetPosition(actualCanvas).X, e.GetPosition(actualCanvas).Y);
-                //MessageBox.Show(GetPixelColor(e.GetPosition(actualCanvas).X, e.GetPosition(actualCanvas).Y).ToString());
 
+           
             }
-            //SetPixelColor(e.GetPosition(actualCanvas).X, e.GetPosition(actualCanvas).Y,_prototype.format.stroke.Color);
-            if (_isErasing)
+            else if (_isErasing)
             {
                 Point _point = e.GetPosition(actualCanvas);
                 deletePainting(_point);
@@ -687,5 +730,13 @@ namespace CKDP_Paint
             }
         }
 
+        private void fillColorButton_Click(object sender, RoutedEventArgs e)
+        {
+            _isErasing = false;
+            _isMoving = false;
+            _isFilling = true;
+            _isDrawing = false;
+            aboveCanvas.Cursor = Cursors.Pen;
+        }
     }
 }
