@@ -70,10 +70,12 @@ namespace MyRectangle
         {
             return new MySquare()
             {
-                stroke = new SolidColorBrush(Colors.Black),
-                strokeDashArray = new DoubleCollection(2),
-                strokeDashCap = PenLineCap.Flat,
-                thickness = 2,
+                Start = new Point(Start.X, Start.Y),
+                End = new Point(End.X, End.Y),
+                stroke = stroke,
+                strokeDashArray = strokeDashArray,
+                strokeDashCap = strokeDashCap,
+                thickness = thickness,
             };
         }
     }

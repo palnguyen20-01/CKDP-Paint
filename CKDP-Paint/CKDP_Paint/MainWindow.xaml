@@ -54,7 +54,7 @@
                         </Fluent:Button.LargeIcon>
                     </Fluent:Button>
                 </Fluent:RibbonGroupBox>
-                <Fluent:RibbonGroupBox Header="Tools">
+                <Fluent:RibbonGroupBox Header="Task">
                     <Fluent:Button Header="Undo" Click="undoButton_Click">
                         <Fluent:Button.LargeIcon>
                               <Image Source="Images/undo.png" RenderOptions.BitmapScalingMode="HighQuality"/>
@@ -71,7 +71,9 @@
                             <Fluent:ScreenTip Title="Redo" Text="Redo"/>
                         </Fluent:Button.ToolTip>
                     </Fluent:Button>
-                    <Fluent:Button Header="Eraser" Click="eraserButton_Click">
+                </Fluent:RibbonGroupBox>
+                <Fluent:RibbonGroupBox Header="Tools">
+                        <Fluent:Button Header="Eraser" Click="eraserButton_Click">
                         <Fluent:Button.LargeIcon>
                             <Image Source="Images/eraser.png" RenderOptions.BitmapScalingMode="HighQuality"/>
                         </Fluent:Button.LargeIcon>
@@ -85,6 +87,30 @@
                         </Fluent:Button.LargeIcon>
                         <Fluent:Button.ToolTip>
                             <Fluent:ScreenTip Title="Move" Text="Move an object"/>
+                        </Fluent:Button.ToolTip>
+                    </Fluent:Button>
+                    <Fluent:Button Header="Cut" Click="cutButton_Click">
+                        <Fluent:Button.LargeIcon>
+                            <Image Source="Images/cut.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Fluent:Button.LargeIcon>
+                        <Fluent:Button.ToolTip>
+                            <Fluent:ScreenTip Title="Cut" Text="Cut an object"/>
+                        </Fluent:Button.ToolTip>
+                    </Fluent:Button>
+                    <Fluent:Button Header="Copy" Click="copyButton_Click">
+                        <Fluent:Button.LargeIcon>
+                            <Image Source="Images/copy.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Fluent:Button.LargeIcon>
+                        <Fluent:Button.ToolTip>
+                            <Fluent:ScreenTip Title="Copy" Text="Copy an object"/>
+                        </Fluent:Button.ToolTip>
+                    </Fluent:Button>
+                    <Fluent:Button Header="Paste" Click="pasteButton_Click">
+                        <Fluent:Button.LargeIcon>
+                            <Image Source="Images/paste.png" RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Fluent:Button.LargeIcon>
+                        <Fluent:Button.ToolTip>
+                            <Fluent:ScreenTip Title="Paste" Text="Paste an object"/>
                         </Fluent:Button.ToolTip>
                     </Fluent:Button>
                 </Fluent:RibbonGroupBox>

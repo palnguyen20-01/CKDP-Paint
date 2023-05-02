@@ -51,9 +51,12 @@ namespace CKDP_Paint
 
         Dictionary<string, IShape> _abilities = new Dictionary<string, IShape>();
         bool _isDrawing = false;
-        bool _isErasing= false;
-        bool _isMoving= false;
-        bool _isFilling=false;
+        bool _isErasing = false;
+        bool _isMoving = false;
+        bool _isFilling = false;
+        bool _isCutting = false;
+        bool _isCoppying = false;
+        bool _isPasting = false;
         Prototype _prototype = new Prototype();
 
         List<IShape> shapeList = new List<IShape>();
@@ -64,6 +67,9 @@ namespace CKDP_Paint
         UIElement movingUIElement;
         IShape movingShape;
         Point movingStart;
+
+        IShape clipboardShape;
+        Point clipboardPoint;
 
         ScaleTransform canvas_ScaleTranform = new ScaleTransform();
         private void BFSFillColor(Point p, Color newColor)
@@ -164,7 +170,10 @@ namespace CKDP_Paint
             _isErasing = false;
             _isMoving = false;
             _isFilling = false; 
-            _isDrawing = false; 
+            _isDrawing = false;
+            _isCutting = false;
+            _isCoppying = false;
+            _isPasting = false;
             aboveCanvas.Cursor = Cursors.Arrow;
 
             var button = (Button)sender;
@@ -265,6 +274,41 @@ namespace CKDP_Paint
                     undoHistoryBuffer.Push(new History_Move(movingUIElement, new Point(Math.Min(movingShape.Start.X, movingShape.End.X), Math.Min(movingShape.Start.Y, movingShape.End.Y))));
                     redoHistoryBuffer.Clear();
                 }
+            }
+            else if (_isCutting || _isCoppying)
+            {
+                Point _point = e.GetPosition(actualCanvas);
+                UIElement element = detectShapeByPosition(_point);
+                if (actualCanvas.Children.IndexOf(element) == -1) return;
+
+                IShape tempShape = shapeList[actualCanvas.Children.IndexOf(element)];
+
+                clipboardShape = (IShape)tempShape.Clone();
+                clipboardPoint = _point;
+
+                if (_isCutting)
+                {
+                    deletePainting(_point);
+                }
+                else
+                {
+                    MessageBox.Show("Copied");
+                }
+            }
+            else if (_isPasting)
+            {
+                Point _point = e.GetPosition(actualCanvas);
+
+                IShape tempShape = (IShape)clipboardShape.Clone();
+
+                tempShape.UpdateStart(tempShape.Start + (_point - clipboardPoint));
+                tempShape.UpdateEnd(tempShape.End + (_point - clipboardPoint));
+
+                UIElement tempUIElement = tempShape.Draw();
+
+                shapeList.Add(tempShape);
+                actualCanvas.Children.Add(tempUIElement);
+                undoHistoryBuffer.Push(new History_Add(tempUIElement));
             }
             else
             {
@@ -491,6 +535,9 @@ namespace CKDP_Paint
             _isMoving = false;
             _isFilling  = false;
             _isDrawing = false;
+            _isCutting = false;
+            _isCoppying = false;
+            _isPasting = false;
             aboveCanvas.Cursor = Cursors.Cross;
         }
 
@@ -628,6 +675,9 @@ namespace CKDP_Paint
             _isErasing = false;
             _isDrawing = false;
             _isFilling = false;
+            _isCutting = false;
+            _isCoppying = false;
+            _isPasting = false;
             aboveCanvas.Cursor = Cursors.Hand;
         }
 
@@ -696,6 +746,9 @@ namespace CKDP_Paint
             _isMoving = false;
             _isFilling = true;
             _isDrawing = false;
+            _isCutting = false;
+            _isCoppying = false;
+            _isPasting = false;
             aboveCanvas.Cursor = Cursors.Pen;
         }
 
@@ -819,6 +872,42 @@ namespace CKDP_Paint
             {
                 Application.Current.Shutdown();
             }
+        }
+
+        private void cutButton_Click(object sender, RoutedEventArgs e)
+        {
+            _isErasing = false;
+            _isMoving = false;
+            _isFilling = false;
+            _isDrawing = false;
+            _isCutting = true;
+            _isCoppying = false;
+            _isPasting = false;
+            aboveCanvas.Cursor = Cursors.Cross;
+        }
+
+        private void copyButton_Click(object sender, RoutedEventArgs e)
+        {
+            _isErasing = false;
+            _isMoving = false;
+            _isFilling = false;
+            _isDrawing = false;
+            _isCutting = false;
+            _isCoppying = true;
+            _isPasting = false;
+            aboveCanvas.Cursor = Cursors.Cross;
+        }
+
+        private void pasteButton_Click(object sender, RoutedEventArgs e)
+        {
+            _isErasing = false;
+            _isMoving = false;
+            _isFilling = false;
+            _isDrawing = false;
+            _isCutting = false;
+            _isCoppying = false;
+            _isPasting = true;
+            aboveCanvas.Cursor = Cursors.Cross;
         }
     }
 }
