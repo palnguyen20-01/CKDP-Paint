@@ -310,6 +310,7 @@ namespace CKDP_Paint
                 shapeList.Add(tempShape);
                 actualCanvas.Children.Add(tempUIElement);
                 undoHistoryBuffer.Push(new History_Add(tempUIElement));
+                redoHistoryBuffer.Clear();
             }
             else
             {
